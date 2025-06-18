@@ -6,16 +6,15 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 
 class User(AbstractUser):
-    # Replace default id with UUID
-    id = None  # Disable default id field
+   
+    id = None  
     user_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
         verbose_name=('User ID')
     )
-    
-    # Make email unique and required
+   
     email = models.EmailField(
         unique=True,
         blank=False,
@@ -23,14 +22,14 @@ class User(AbstractUser):
         verbose_name=('Email address')
     )
     
-    # Set email as the username field
+   
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']  # username is required for createsuperuser
+    REQUIRED_FIELDS = ['username']  
     
     class Meta:
         verbose_name = ('User')
         verbose_name_plural = ('Users')
-        db_table = 'users'  # Optional custom table name
+        db_table = 'users' 
     
     def __str__(self):
         return self.email

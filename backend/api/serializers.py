@@ -6,7 +6,30 @@ from .models import (
 )
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.contrib.auth import authenticate
 
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, min_length=8)
+    
+    def validate_email(self, value):
+        return value.lower()
+    
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        
+        if email and password:
+            user = authenticate(email=email, password=password)
+            if not user:
+                raise serializers.ValidationError('Invalid credentials')
+            if not user.is_active:
+                raise serializers.ValidationError('User account is disabled')
+            attrs['user'] = user
+        else:
+            raise serializers.ValidationError('Must include email and password')
+        
+        return attrs
 
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True, required=True)
@@ -16,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'email', 'username', 'password', 'password2']
         extra_kwargs = {
             'password': {'write_only': True},
-            'user_id': {'read_only': True}  # Typically auto-generated
+            'user_id': {'read_only': True}  
         }
 
     def validate_email(self, value):

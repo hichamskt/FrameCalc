@@ -9,8 +9,9 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 # from .models import User
-from .serializers import UserSerializer
-from django.contrib.auth import get_user_model
+from .serializers import UserSerializer , UserLoginSerializer
+from django.contrib.auth import get_user_model 
+
 
 User = get_user_model()
 
@@ -49,20 +50,19 @@ class UserRegistrationView(generics.CreateAPIView):
             )
 
 
+
 class UserLoginView(generics.GenericAPIView):
-    """
-    User login with email and password
-    """
+   
+
+    serializer_class = UserLoginSerializer
     permission_classes = [AllowAny]
     
     def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         
-        if not email or not password:
-            return Response({
-                'error': 'Email and password are required'
-            }, status=status.HTTP_400_BAD_REQUEST)
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
         
         user = authenticate(email=email, password=password)
         
@@ -80,6 +80,8 @@ class UserLoginView(generics.GenericAPIView):
             return Response({
                 'error': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
+
+
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
@@ -128,7 +130,7 @@ class UserListView(generics.ListAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         # Only superusers can see all users
