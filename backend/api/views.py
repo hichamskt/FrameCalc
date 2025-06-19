@@ -9,8 +9,10 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 # from .models import User
-from .serializers import UserSerializer , UserLoginSerializer
+from .serializers import UserSerializer , UserLoginSerializer , SupplyTypeSerializer
 from django.contrib.auth import get_user_model 
+from .models import SupplyType
+
 
 
 User = get_user_model()
@@ -86,25 +88,62 @@ class UserLoginView(generics.GenericAPIView):
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     """
-    Get and update user profile
+    API endpoint that allows users to view or edit their profile.
+    
+    GET: Returns the authenticated user's profile
+    PATCH: Partially updates the user's profile
+    PUT: Fully updates the user's profile
     """
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    
+    lookup_field = 'user_id'  # Important for UUID primary key
+
     def get_object(self):
+        """Return the authenticated user"""
         return self.request.user
-    
+
+    def get_serializer_context(self):
+        """Add request to serializer context"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
     def update(self, request, *args, **kwargs):
+        """Handle profile updates with better validation"""
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
         
-        return Response({
-            'message': 'Profile updated successfully',
-            'user': UserSerializer(user).data
-        }, status=status.HTTP_200_OK)
+        # Remove password fields if present (handle password changes separately)
+        request.data.pop('password', None)
+        request.data.pop('password2', None)
+        
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+        
+        try:
+            user = serializer.save()
+            return Response({
+                'status': 'success',
+                'message': 'Profile updated successfully',
+                'data': UserSerializer(user, context={'request': request}).data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        """Custom update logic"""
+        
+        if 'email' in serializer.validated_data:
+            serializer.validated_data['email'] = serializer.validated_data['email'].lower().strip()
+        serializer.save()
 
 
 class UserDetailView(generics.RetrieveAPIView):
@@ -243,3 +282,45 @@ def change_password(request):
     return Response({
         'message': 'Password changed successfully'
     }, status=status.HTTP_200_OK)
+
+
+
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def supply_type_list(request):
+    if request.method == 'GET':
+        supply_types = SupplyType.objects.all().order_by('name')
+        serializer = SupplyTypeSerializer(supply_types, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = SupplyTypeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def supply_type_detail(request, pk):
+    try:
+        supply_type = SupplyType.objects.get(pk=pk)
+    except SupplyType.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = SupplyTypeSerializer(supply_type)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = SupplyTypeSerializer(supply_type, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        supply_type.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

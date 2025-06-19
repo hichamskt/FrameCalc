@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     User, Company, Material, Profile, ProfileAluminum, StructureType,
     StructureSubType, SubtypeRequirement, MaterialRequirement,
-    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem
+    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType
 )
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -109,6 +109,12 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = ['company_id', 'user', 'name', 'created_at']
+    
+# supply Serializer
+class SupplyTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupplyType
+        fields = ['id', 'name', 'description']
 
 # Material Serializer
 class MaterialSerializer(serializers.ModelSerializer):

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     # Authentication
     path('register/', views.UserRegistrationView.as_view(), name='user-register'),
@@ -16,4 +17,8 @@ urlpatterns = [
     path('users/', views.UserListView.as_view(), name='user-list'),
     path('users/<uuid:user_id>/', views.UserDetailView.as_view(), name='user-detail'),
     path('users/<uuid:user_id>/delete/', views.UserDeleteView.as_view(), name='user-delete'),
+
+
+     path('supply-types/', views.supply_type_list, name='supply-type-list'),
+    path('supply-types/<int:pk>/', views.supply_type_detail, name='supply-type-detail')
 ]
