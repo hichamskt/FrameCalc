@@ -110,3 +110,16 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/companies/<int:company_id>/materials/filter/`              | Filter materials for a specific company     |
 
 
+---
+
+### 🧩 Profile Management
+
+| Method | Endpoint                                                  | Description                                       |
+|--------|-----------------------------------------------------------|---------------------------------------------------|
+| GET    | `/profiles/`                                              | List all profiles                                |
+| POST   | `/profiles/`                                              | Create a new profile                             |
+| GET    | `/profiles/<int:profile_id>/`                             | Retrieve a specific profile                      |
+| PUT    | `/profiles/<int:profile_id>/`                             | Update a specific profile                        |
+| DELETE | `/profiles/<int:profile_id>/`                             | Delete a specific profile                        |
+| GET    | `/companies/<int:company_id>/profiles/`                   | List all profiles for a specific company         |
+| GET    | `/profiles/with-company/`                                 | List all profiles along with their company info  |
