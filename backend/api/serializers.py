@@ -39,55 +39,66 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'email', 'username', 'password', 'password2']
         extra_kwargs = {
             'password': {'write_only': True},
-            'user_id': {'read_only': True}  
+            'user_id': {'read_only': True},
+            'email': {'required': True}
         }
 
     def validate_email(self, value):
         value = value.lower().strip()
-        # Handle both create and update scenarios
-        if self.instance is None or self.instance.email != value:
+        if self.instance:  # Update case
+            if User.objects.filter(email=value).exclude(user_id=self.instance.user_id).exists():
+                raise serializers.ValidationError("Email already exists")
+        else:  # Create case
             if User.objects.filter(email=value).exists():
                 raise serializers.ValidationError("Email already exists")
         return value
 
     def validate_username(self, value):
         value = value.strip()
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username already exists")
+        if self.instance:  # Update case
+            if User.objects.filter(username=value).exclude(user_id=self.instance.user_id).exists():
+                raise serializers.ValidationError("Username already exists")
+        else:  # Create case
+            if User.objects.filter(username=value).exists():
+                raise serializers.ValidationError("Username already exists")
         return value
 
     def validate(self, data):
-        if data['password'] != data['password2']:
-            raise serializers.ValidationError(
-                {"password2": "Passwords don't match"}
-            )
-        
-        try:
-            validate_password(data['password'])
-        except ValidationError as e:
-            raise serializers.ValidationError({'password': e.messages})
+        # Only validate passwords if they're being set/changed
+        if 'password' in data:
+            if data['password'] != data['password2']:
+                raise serializers.ValidationError(
+                    {"password2": "Passwords don't match"}
+                )
             
+            try:
+                validate_password(data['password'])
+            except ValidationError as e:
+                raise serializers.ValidationError({'password': e.messages})
+        
         return data
 
     def create(self, validated_data):
-        validated_data.pop('password2')  # Remove confirmation field
-        user = User.objects.create_user(
+        validated_data.pop('password2')
+        return User.objects.create_user(
             email=validated_data['email'],
             username=validated_data['username'],
             password=validated_data['password']
         )
-        return user
 
     def update(self, instance, validated_data):
-        validated_data.pop('password2', None)  # Safely remove if exists
-        password = validated_data.pop('password', None)
+        # Remove password2 if present
+        validated_data.pop('password2', None)
         
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-            
+        # Handle password update if provided
+        password = validated_data.pop('password', None)
         if password:
             instance.set_password(password)
-            
+        
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
         instance.save()
         return instance
 

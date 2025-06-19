@@ -49,8 +49,15 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    # Add these critical settings for UUID user_id
+    "USER_ID_FIELD": "user_id",        # Field in your User model
+    "USER_ID_CLAIM": "user_id",       # Claim in the token payload
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    
+    # Optional but recommended settings
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
-
 
 # Application definition
 
