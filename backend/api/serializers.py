@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     User, Company, Material, Profile, ProfileAluminum, StructureType,
     StructureSubType, SubtypeRequirement, MaterialRequirement,
-    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType
+    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType , 
 )
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -101,20 +101,62 @@ class UserSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
-
-# Company Serializer
-class CompanySerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = Company
-        fields = ['company_id', 'user', 'name', 'created_at']
     
 # supply Serializer
 class SupplyTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SupplyType
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'name', 'description', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
+# Company Serializer
+class CompanySerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    supply_types = SupplyTypeSerializer(many=True, read_only=True)
+    supply_type_ids = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=SupplyType.objects.all(),
+        write_only=True,
+        required=False,
+        default=[]
+    )
+
+    class Meta:
+        model = Company
+        fields = [
+            'company_id', 
+            'user', 
+            'name', 
+            'supply_types',  # Read-only serialized data
+            'supply_type_ids',  # Write-only ID list
+            'created_at'
+        ]
+
+    def create(self, validated_data):
+        # Remove supply_type_ids from validated_data
+        supply_type_ids = validated_data.pop('supply_type_ids', [])
+        
+        # Create the company instance first
+        company = Company.objects.create(**validated_data)
+        
+        # Then set the M2M relationship
+        company.supply_types.set(supply_type_ids)
+        
+        return company
+
+    def update(self, instance, validated_data):
+        # Handle supply_type_ids if provided
+        supply_type_ids = validated_data.pop('supply_type_ids', None)
+        
+        # Update other fields
+        instance = super().update(instance, validated_data)
+        
+        # Update M2M relationship if supply_type_ids was provided
+        if supply_type_ids is not None:
+            instance.supply_types.set(supply_type_ids)
+        
+        return instance
 
 # Material Serializer
 class MaterialSerializer(serializers.ModelSerializer):

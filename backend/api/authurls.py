@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import company_views
 
 
 urlpatterns = [
@@ -19,6 +20,12 @@ urlpatterns = [
     path('users/<uuid:user_id>/delete/', views.UserDeleteView.as_view(), name='user-delete'),
 
 
+    # Supply managment 
      path('supply-types/', views.supply_type_list, name='supply-type-list'),
-    path('supply-types/<int:pk>/', views.supply_type_detail, name='supply-type-detail')
+    path('supply-types/<int:pk>/', views.supply_type_detail, name='supply-type-detail'),
+
+
+    path('companies/', company_views.CompanyListCreateView.as_view(), name='company-list-create'),
+    path('companies/<int:company_id>/', company_views.CompanyRetrieveUpdateDestroyView.as_view(),  name='company-retrieve-update-destroy'),
+    path('my-company/', company_views.MyCompanyView.as_view(), name='my-company'),
 ]
