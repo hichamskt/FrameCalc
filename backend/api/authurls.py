@@ -3,6 +3,7 @@ from . import views
 from . import company_views
 from . import category_views
 from . import material_views
+from . import profile_views
 
 
 urlpatterns = [
@@ -42,5 +43,11 @@ urlpatterns = [
     path('materials/<int:material_id>/', material_views.MaterialRetrieveUpdateDestroyView.as_view(),name='material-retrieve-update-destroy'),
      path('companies/<int:company_id>/materials/', material_views.CompanyMaterialsView.as_view(),  name='company-materials'),
      path('companies/<int:company_id>/materials/filter/',material_views.CompanyMaterialsFilterView.as_view(), name='company-materials-filter'),
+
+
+    path('profiles/', profile_views.ProfileListCreateView.as_view(), name='profile-list-create'),
+    path('profiles/<int:profile_id>/', profile_views.ProfileRetrieveUpdateDestroyView.as_view(),  name='profile-retrieve-update-destroy'),
+    path('companies/<int:company_id>/profiles/', profile_views.PublicProfilesView.as_view(), name='company-profiles'),
+    path('profiles/with-company/', profile_views.AllProfilesWithCompanyView.as_view(), name='all-profiles-with-company'),
 
 ]

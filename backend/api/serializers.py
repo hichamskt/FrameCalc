@@ -202,9 +202,20 @@ class MaterialSerializer(serializers.ModelSerializer):
 
 # Profile Serializer
 class ProfileSerializer(serializers.ModelSerializer):
+    company_name = serializers.CharField(source='company.name', read_only=True)
+    
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['profile_id', 'company', 'company_name', 'name', 'quality', 'created_at']
+        read_only_fields = ['profile_id', 'created_at', 'company_name', 'company']
+        
+class ProfileWithCompanySerializer(serializers.ModelSerializer):
+    company_name = serializers.CharField(source='company.name', read_only=True)
+    
+    class Meta:
+        model = Profile
+        fields = ['profile_id', 'company', 'company_name', 'name', 'quality', 'created_at']
+        read_only_fields = ['profile_id', 'created_at']
 
 # ProfileAluminum Serializer
 class ProfileAluminumSerializer(serializers.ModelSerializer):
