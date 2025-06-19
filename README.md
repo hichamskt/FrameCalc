@@ -17,3 +17,65 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 ## Data Model Overview
 ### Entity-Relationship Diagram (ERD) 
   ![Image](https://github.com/user-attachments/assets/4a7befc4-439f-4332-8d89-5d6222136280)
+
+## 📘 API Endpoints Documentation
+
+---
+
+### 🔐 Authentication & User Profile
+---
+
+| Method | Endpoint              | Description                             |
+|--------|-----------------------|-----------------------------------------|
+| POST   | `/register/`          | Register a new user                     |
+| POST   | `/login/`             | Log in a user and retrieve tokens       |
+| POST   | `/logout/`            | Log out the authenticated user          |
+| POST   | `/refresh-token/`     | Refresh the authentication token        |
+
+
+
+| Method | Endpoint            | Description                            |
+|--------|---------------------|----------------------------------------|
+| GET    | `/profile/`         | Retrieve authenticated user's profile  |
+| PITCH  | `/profile/`         | Update user profile                    |
+| POST   | `/change-password/` | Change password for authenticated user |
+
+---
+
+### 👤 User Management
+
+| Method | Endpoint                        | Description                                                      |
+|--------|----------------------------------|-----------------------------------------------------------------|
+| GET    | `/users/`                       | List all the users for the superuser if not only display the user|
+| GET    | `/users/<uuid:user_id>/`        | Retrieve details of a specific user                              |
+| DELETE | `/users/<uuid:user_id>/delete/` | Delete a specific user                                           |
+
+---
+
+### 📦 Supply Management
+
+| Method | Endpoint                          | Description                     |
+|--------|-----------------------------------|---------------------------------|
+| GET    | `/supply-types/`                  | List all supply types           |
+| GET    | `/supply-types/<int:pk>/`         | Retrieve a specific supply type |
+| PUT    | `/supply-types/<int:pk>/`         | Update a specific supply type   |
+| DELETE    | `/supply-types/<int:pk>/`      | Delete a specific supply type   |
+
+---
+
+### 🏢 Company Management
+
+| Method | Endpoint                                                  | Description                                      |
+|--------|-----------------------------------------------------------|--------------------------------------------------|
+| GET    | `/companies/`                                             | List all companies                               |
+| POST   | `/companies/`                                             | Create a new company                             |
+| GET    | `/companies/<int:company_id>/`                            | Retrieve a specific company                      |
+| PUT    | `/companies/<int:company_id>/`                            | Update a specific company                        |
+| DELETE | `/companies/<int:company_id>/`                            | Delete a specific company                        |
+| GET    | `/my-company/`                                            | Retrieve company of the authenticated user       |
+| GET    | `/companies/by-supply-type/<int:supply_type_id>/`         | List companies offering a specific supply type   |
+| GET    | `/allcompanies/`                                          | Get all companies (alternative list view)        |
+
+---
+
+> **Note:** Authentication is required for user-specific and company-related endpoints.
