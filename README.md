@@ -123,3 +123,15 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | DELETE | `/profiles/<int:profile_id>/`                             | Delete a specific profile                        |
 | GET    | `/companies/<int:company_id>/profiles/`                   | List all profiles for a specific company         |
 | GET    | `/profiles/with-company/`                                 | List all profiles along with their company info  |
+
+### 🏗️ Profile Aluminum Management
+
+| Method | Endpoint                                                             | Description                                               |
+|--------|----------------------------------------------------------------------|-----------------------------------------------------------|
+| GET    | `/profile-aluminums/`                                                | List all aluminum profiles                                |
+| POST   | `/profile-aluminums/`                                                | Create a new aluminum profile                             |
+| GET    | `/profile-aluminums/<int:profile_material_id>/`                     | Retrieve a specific aluminum profile                      |
+| PUT    | `/profile-aluminums/<int:profile_material_id>/`                     | Update a specific aluminum profile                        |
+| DELETE | `/profile-aluminums/<int:profile_material_id>/`                     | Delete a specific aluminum profile                        |
+| GET    | `/profiles/<int:profile_id>/aluminums/`                              | List all aluminum profiles for a specific profile         |
+| GET    | `/public/profiles/<int:profile_id>/aluminums/`                       | Publicly list aluminum profiles for a specific profile    |
