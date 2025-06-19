@@ -49,6 +49,7 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/users/<uuid:user_id>/`        | Retrieve details of a specific user                              |
 | DELETE | `/users/<uuid:user_id>/delete/` | Delete a specific user                                           |
 
+> **Note:** Authentication is required for user-specific and company-related endpoints.
 ---
 
 ### 📦 Supply Management
@@ -78,4 +79,19 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 
 ---
 
-> **Note:** Authentication is required for user-specific and company-related endpoints.
+> ⚠️ Token-based authentication is expected for protected routes. Ensure to include the `Authorization: Bearer <token>` header.
+
+
+---
+
+### 🗂️ Category Management
+
+| Method | Endpoint                              | Description                          |
+|--------|----------------------------------------|--------------------------------------|
+| GET    | `/categories/`                         | List all categories                   |
+| POST   | `/categories/`                         | Create a new category                 |
+| GET    | `/categories/<int:category_id>/`       | Retrieve a specific category          |
+| PUT    | `/categories/<int:category_id>/`       | Update a specific category            |
+| DELETE | `/categories/<int:category_id>/`       | Delete a specific category            |
+
+
