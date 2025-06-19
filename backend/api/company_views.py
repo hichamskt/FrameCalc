@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import Company
 from .serializers import CompanySerializer
 from django.db.models import Prefetch
-
+from django.db.models import Q
 User = get_user_model()
 
 class CompanyListCreateView(generics.ListCreateAPIView):
@@ -52,3 +52,17 @@ class CompanyListView(generics.ListAPIView):
         return Company.objects.prefetch_related(
             Prefetch('supply_types')
         ).all().order_by('name')
+class CompanySearchView(generics.ListAPIView):
+    serializer_class = CompanySerializer
+    
+    def get_queryset(self):
+        queryset = Company.objects.prefetch_related('supply_types')
+        search = self.request.query_params.get('search', None)
+        
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(supply_types__name__icontains=search)
+            ).distinct()
+            
+        return queryset.order_by('name')

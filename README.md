@@ -75,6 +75,7 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/my-company/`                                            | Retrieve company of the authenticated user       |
 | GET    | `/companies/by-supply-type/<int:supply_type_id>/`         | List companies offering a specific supply type   |
 | GET    | `/allcompanies/`                                          | Get all companies (alternative list view)        |
+| GET    | `/companies/search/`                                      | Search company by name                           |
 
 ---
 
