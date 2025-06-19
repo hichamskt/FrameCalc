@@ -28,4 +28,6 @@ urlpatterns = [
     path('companies/', company_views.CompanyListCreateView.as_view(), name='company-list-create'),
     path('companies/<int:company_id>/', company_views.CompanyRetrieveUpdateDestroyView.as_view(),  name='company-retrieve-update-destroy'),
     path('my-company/', company_views.MyCompanyView.as_view(), name='my-company'),
+     path('companies/by-supply-type/<int:supply_type_id>/', company_views.CompaniesBySupplyTypeView.as_view(),  name='companies-by-supply-type'),
+      path('allcompanies/', company_views.CompanyListView.as_view(), name='company-list'),
 ]

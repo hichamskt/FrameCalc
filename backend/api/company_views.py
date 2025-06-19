@@ -3,6 +3,7 @@ from rest_framework.exceptions import NotFound
 from django.contrib.auth import get_user_model
 from .models import Company
 from .serializers import CompanySerializer
+from django.db.models import Prefetch
 
 User = get_user_model()
 
@@ -34,3 +35,20 @@ class MyCompanyView(generics.RetrieveAPIView):
     def get_object(self):
         """Get the company for the current user"""
         return Company.objects.get(user=self.request.user)
+    
+class CompaniesBySupplyTypeView(generics.ListAPIView):
+    serializer_class = CompanySerializer
+    
+    def get_queryset(self):
+        supply_type_id = self.kwargs['supply_type_id']
+        return Company.objects.filter(supply_types__id=supply_type_id).distinct()
+    
+class CompanyListView(generics.ListAPIView):
+    serializer_class = CompanySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # Adjust as needed
+    
+    def get_queryset(self):
+        # Optimize query with prefetch_related to avoid N+1 problem
+        return Company.objects.prefetch_related(
+            Prefetch('supply_types')
+        ).all().order_by('name')
