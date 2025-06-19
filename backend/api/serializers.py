@@ -178,9 +178,27 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # Material Serializer
 class MaterialSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    supply_type_name = serializers.CharField(source='supply_type.name', read_only=True)
     class Meta:
         model = Material
-        fields = '__all__'
+        fields = [
+            'material_id', 'company', 'name', 'category','category_name',
+            'unit_type', 'unit_price', 'supply_type','supply_type_name',
+            'image', 'image_url', 'created_at',
+        ]
+        read_only_fields = ['material_id', 'created_at', 'image_url']
+    
+    def get_image_url(self, obj):
+        if obj.image:
+            return self.context['request'].build_absolute_uri(obj.image.url)
+        return None
+    def get_category_name(self, obj):
+        return obj.category.name if obj.category else None
+    
+    def get_supply_type_name(self, obj):
+        return obj.supply_type.name if obj.supply_type else None
 
 # Profile Serializer
 class ProfileSerializer(serializers.ModelSerializer):
