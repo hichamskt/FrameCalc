@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import company_views
+from . import category_views
 
 
 urlpatterns = [
@@ -30,7 +31,10 @@ urlpatterns = [
     path('my-company/', company_views.MyCompanyView.as_view(), name='my-company'),
     path('companies/by-supply-type/<int:supply_type_id>/', company_views.CompaniesBySupplyTypeView.as_view(),  name='companies-by-supply-type'),
     path('allcompanies/', company_views.CompanyListView.as_view(), name='company-list'),
-    path('companies/search/', company_views.CompanySearchView.as_view(), name='company-search')
+    path('companies/search/', company_views.CompanySearchView.as_view(), name='company-search'),
 
+
+    path('categories/', category_views.CategoryListCreateView.as_view(), name='category-list-create'),
+    path('categories/<int:category_id>/', category_views.CategoryRetrieveUpdateDestroyView.as_view(), name='category-retrieve-update-destroy'),
 
 ]

@@ -23,7 +23,6 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 ---
 
 ### 🔐 Authentication & User Profile
----
 
 | Method | Endpoint              | Description                             |
 |--------|-----------------------|-----------------------------------------|

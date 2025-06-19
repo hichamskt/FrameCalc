@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     User, Company, Material, Profile, ProfileAluminum, StructureType,
     StructureSubType, SubtypeRequirement, MaterialRequirement,
-    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType , 
+    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType , Category,
 )
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -137,26 +137,44 @@ class CompanySerializer(serializers.ModelSerializer):
         # Remove supply_type_ids from validated_data
         supply_type_ids = validated_data.pop('supply_type_ids', [])
         
-        # Create the company instance first
+      
         company = Company.objects.create(**validated_data)
         
-        # Then set the M2M relationship
+       
         company.supply_types.set(supply_type_ids)
         
         return company
 
     def update(self, instance, validated_data):
-        # Handle supply_type_ids if provided
+      
         supply_type_ids = validated_data.pop('supply_type_ids', None)
         
-        # Update other fields
+     
         instance = super().update(instance, validated_data)
         
-        # Update M2M relationship if supply_type_ids was provided
+        
         if supply_type_ids is not None:
             instance.supply_types.set(supply_type_ids)
         
         return instance
+
+
+# Category Serializer
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['category_id', 'name', 'description', 'parent', 'created_at']
+        read_only_fields = ['category_id', 'created_at']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.parent:
+            representation['parent'] = {
+                'category_id': instance.parent.category_id,
+                'name': instance.parent.name
+            }
+        return representation
+
 
 # Material Serializer
 class MaterialSerializer(serializers.ModelSerializer):
