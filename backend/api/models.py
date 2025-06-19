@@ -142,6 +142,7 @@ class ProfileAluminum(models.Model):
     name = models.CharField(max_length=100)
     unit_type = models.CharField(max_length=20)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    reference = models.CharField(max_length=20)
     length = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

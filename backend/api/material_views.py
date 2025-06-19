@@ -29,6 +29,21 @@ class MaterialRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = 'material_id'
 
+class PublicCompanyMaterialsView(generics.ListAPIView):
+   
+    serializer_class = MaterialSerializer
+    permission_classes = []  
+
+    def get_queryset(self):
+        company_id = self.kwargs['company_id']
+        # Verify company exists (will return 404 if not)
+        company = get_object_or_404(Company, pk=company_id)
+        
+        # Return all materials for this company
+        return Material.objects.filter(company=company)\
+                             .select_related('category', 'supply_type')\
+                             .order_by('name')
+
 
 class CompanyMaterialsView(generics.ListAPIView):
     serializer_class = MaterialSerializer
@@ -71,3 +86,35 @@ class CompanyMaterialsFilterView(generics.ListAPIView):
             queryset = queryset.filter(supply_type_id=supply_type_id)
         
         return queryset.order_by('name')
+    
+from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from .models import Material, Company
+from .serializers import MaterialSerializer
+
+class PublicCompanyMaterialsFilterView(generics.ListAPIView):
+   
+
+    serializer_class = MaterialSerializer
+    permission_classes = []  
+
+    def get_queryset(self):
+        company_id = self.kwargs['company_id']
+        company = get_object_or_404(Company, pk=company_id)
+        
+        # Get filter parameters
+        category_id = self.request.query_params.get('category_id')
+        supply_type_id = self.request.query_params.get('supply_type_id')
+        
+        # Base queryset
+        queryset = Material.objects.filter(company=company)\
+                                 .select_related('category', 'supply_type')
+        
+        # Apply filters
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+        if supply_type_id:
+            queryset = queryset.filter(supply_type_id=supply_type_id)
+        
+        return queryset.order_by('name')
+

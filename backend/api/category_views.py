@@ -20,3 +20,14 @@ class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = 'category_id'
 
+class PublicCategoryListView(generics.ListAPIView):
+   
+    serializer_class = CategorySerializer
+    permission_classes = []  
+    
+    def get_queryset(self):
+        queryset = Category.objects.all()
+        parent_id = self.request.query_params.get('parent_id')
+        if parent_id:
+            queryset = queryset.filter(parent_id=parent_id)
+        return queryset.order_by('name')
