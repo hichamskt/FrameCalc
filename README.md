@@ -16,7 +16,7 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 
 ## Data Model Overview
 ### Entity-Relationship Diagram (ERD) 
-  ![Image](https://github.com/user-attachments/assets/4a7befc4-439f-4332-8d89-5d6222136280)
+  ![Image](https://github.com/user-attachments/assets/f06fa876-9ae1-4ad0-a497-2029dfcd0910)
 
 ## 📘 API Endpoints Documentation
 
@@ -93,5 +93,20 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/categories/<int:category_id>/`       | Retrieve a specific category          |
 | PUT    | `/categories/<int:category_id>/`       | Update a specific category            |
 | DELETE | `/categories/<int:category_id>/`       | Delete a specific category            |
+
+
+---
+
+### 🧱 Material Management
+
+| Method | Endpoint                                                     | Description                                 |
+|--------|--------------------------------------------------------------|---------------------------------------------|
+| GET    | `/materials/`                                                | List all materials                          |
+| POST   | `/materials/`                                                | Create a new material                       |
+| GET    | `/materials/<int:material_id>/`                              | Retrieve a specific material                |
+| PUT    | `/materials/<int:material_id>/`                              | Update a specific material                  |
+| DELETE | `/materials/<int:material_id>/`                              | Delete a specific material                  |
+| GET    | `/companies/<int:company_id>/materials/`                     | List all materials for a specific company   |
+| GET    | `/companies/<int:company_id>/materials/filter/`              | Filter materials for a specific company     |
 
 
