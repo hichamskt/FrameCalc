@@ -173,11 +173,30 @@ class StructureSubType(models.Model):
     def __str__(self):
         return f"{self.type.name} - {self.name}"
 
+
 class SubtypeRequirement(models.Model):
     requirement_id = models.AutoField(primary_key=True)
-    subtype = models.ForeignKey(StructureSubType, on_delete=models.CASCADE)
+    subtype = models.ForeignKey(StructureSubType, on_delete=models.CASCADE, related_name='requirements')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='subtype_requirements')
     width = models.DecimalField(max_digits=10, decimal_places=2)
     height = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subtype', 'profile'], 
+                name='unique_requirement_per_subtype_profile'
+            )
+        ]
+        ordering = ['subtype', 'profile']
+    
+    def __str__(self):
+        return f"{self.subtype.name} - {self.profile.name} (W:{self.width}, H:{self.height})"
+
+
+
+
 
 class MaterialRequirement(models.Model):
     req_item_id = models.AutoField(primary_key=True)

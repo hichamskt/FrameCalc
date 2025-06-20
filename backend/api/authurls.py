@@ -7,6 +7,7 @@ from .views import profile
 from .views import profilealuminum
 from .views import structuretype
 from .views import structuresubtype
+from .views import Subtype_requirement
 
 urlpatterns = [
     # Authentication
@@ -77,4 +78,15 @@ urlpatterns = [
     path('structure-subtypes/', structuresubtype.StructureSubTypeListCreateView.as_view(),name='structure-subtype-list'),
     path('structure-subtypes/<int:subtype_id>/', structuresubtype.StructureSubTypeDetailView.as_view(),name='structure-subtype-detail'),
     path('structure-types/<int:type_id>/subtypes/',structuresubtype.StructureSubTypeByTypeView.as_view(),name='structure-subtypes-by-type'),
+
+
+    #SubtypeRequirement
+    path('subtype-requirements/',Subtype_requirement.SubtypeRequirementListCreateView.as_view(), name='subtype-requirement-list'),
+    path('subtype-requirements/<int:requirement_id>/',  Subtype_requirement.SubtypeRequirementDetailView.as_view(),name='subtype-requirement-detail'),
+    
+    # Subtype-specific requirements
+    path('structure-subtypes/<int:subtype_id>/requirements/', Subtype_requirement.SubtypeRequirementsView.as_view(), name='subtype-requirements'),
+    
+    # Profile-specific requirements
+    path('profiles/<int:profile_id>/subtype-requirements/',Subtype_requirement.ProfileSubtypeRequirementsView.as_view(), name='profile-subtype-requirements'),
 ]
