@@ -135,3 +135,17 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | DELETE | `/profile-aluminums/<int:profile_material_id>/`                     | Delete a specific aluminum profile                        |
 | GET    | `/profiles/<int:profile_id>/aluminums/`                              | List all aluminum profiles for a specific profile         |
 | GET    | `/public/profiles/<int:profile_id>/aluminums/`                       | Publicly list aluminum profiles for a specific profile    |
+
+
+---
+
+### 🏗️ Structure Type Management
+
+| Method | Endpoint                                       | Description                                  |
+|--------|------------------------------------------------|----------------------------------------------|
+| GET    | `/structure-types/`                            | List all structure types                     |
+| GET    | `/structure-types/<int:type_id>/`              | Retrieve a specific structure type           |
+| PUT    | `/structure-types/<int:type_id>/`              | Update a specific structure type             |
+| DELETE | `/structure-types/<int:type_id>/`              | Delete a specific structure type             |
+
+
