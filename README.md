@@ -148,4 +148,16 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | PUT    | `/structure-types/<int:type_id>/`              | Update a specific structure type             |
 | DELETE | `/structure-types/<int:type_id>/`              | Delete a specific structure type             |
 
+---
+
+### 🏗️ Structure SubType Management
+
+| Method | Endpoint                                                   | Description                                         |
+|--------|------------------------------------------------------------|-----------------------------------------------------|
+| GET    | `/structure-subtypes/`                                     | List all structure subtypes                         |
+| POST   | `/structure-subtypes/`                                     | Create a new structure subtype                      |
+| GET    | `/structure-subtypes/<int:subtype_id>/`                    | Retrieve a specific structure subtype               |
+| PUT    | `/structure-subtypes/<int:subtype_id>/`                    | Update a specific structure subtype                 |
+| DELETE | `/structure-subtypes/<int:subtype_id>/`                    | Delete a specific structure subtype                 |
+| GET    | `/structure-types/<int:type_id>/subtypes/`                 | List all subtypes under a specific structure type   |
 
