@@ -5,7 +5,7 @@ from . import category_views
 from . import material_views
 from . import profile_views
 from . import profilealuminum_view
-
+from . import structuretype_views
 
 urlpatterns = [
     # Authentication
@@ -64,4 +64,10 @@ urlpatterns = [
     path('profiles/<int:profile_id>/aluminums/', profilealuminum_view.ProfileAluminumByProfileView.as_view(), name='profile-aluminums-by-profile'),
     path('public/profiles/<int:profile_id>/aluminums/', profilealuminum_view.PublicProfileAluminumByProfileView.as_view(), name='public-profile-aluminums'),
 
+
+    #StructureType
+
+
+    path('structure-types/', structuretype_views.StructureTypeListView.as_view(), name='structure-type-list'),
+    path('structure-types/<int:type_id>/', structuretype_views.StructureTypeDetailView.as_view(), name='structure-type-detail'),
 ]

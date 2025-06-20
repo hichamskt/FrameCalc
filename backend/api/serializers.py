@@ -235,7 +235,9 @@ class ProfileAluminumSerializer(serializers.ModelSerializer):
 class StructureTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = StructureType
-        fields = '__all__'
+        fields = ['type_id', 'name']
+
+
 
 # StructureSubType Serializer
 class StructureSubTypeSerializer(serializers.ModelSerializer):
