@@ -124,6 +124,7 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/companies/<int:company_id>/profiles/`                   | List all profiles for a specific company         |
 | GET    | `/profiles/with-company/`                                 | List all profiles along with their company info  |
 
+---
 ### 🏗️ Profile Aluminum Management
 
 | Method | Endpoint                                                             | Description                                               |
@@ -161,3 +162,16 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | DELETE | `/structure-subtypes/<int:subtype_id>/`                    | Delete a specific structure subtype                 |
 | GET    | `/structure-types/<int:type_id>/subtypes/`                 | List all subtypes under a specific structure type   |
 
+---
+
+### 📐 Subtype Requirement Management
+
+| Method | Endpoint                                                              | Description                                       |
+|--------|-----------------------------------------------------------------------|---------------------------------------------------|
+| GET    | `/subtype-requirements/`                                              | List all subtype requirements                    |
+| POST   | `/subtype-requirements/`                                              | Create a new subtype requirement                 |
+| GET    | `/subtype-requirements/<int:requirement_id>/`                         | Retrieve a specific subtype requirement          |
+| PUT    | `/subtype-requirements/<int:requirement_id>/`                         | Update a specific subtype requirement            |
+| DELETE | `/subtype-requirements/<int:requirement_id>/`                         | Delete a specific subtype requirement            |
+| GET    | `/structure-subtypes/<int:subtype_id>/requirements/`                  | List requirements related to a specific subtype  |
+| GET    | `/profiles/<int:profile_id>/subtype-requirements/`                   | List requirements related to a specific profile  |
