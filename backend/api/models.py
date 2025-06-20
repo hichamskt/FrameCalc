@@ -152,13 +152,26 @@ class StructureType(models.Model):
 
 class StructureSubType(models.Model):
     subtype_id = models.AutoField(primary_key=True)
-    type = models.ForeignKey(StructureType, on_delete=models.CASCADE)
+    type = models.ForeignKey('StructureType', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    typeimage = models.ImageField(
+        upload_to='structuresubType/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])]
+    )
     
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['type', 'name'], name='unique_subtype_name_per_type')
+            models.UniqueConstraint(
+                fields=['type', 'name'], 
+                name='unique_subtype_name_per_type'
+            )
         ]
+        ordering = ['type', 'name']
+    
+    def __str__(self):
+        return f"{self.type.name} - {self.name}"
 
 class SubtypeRequirement(models.Model):
     requirement_id = models.AutoField(primary_key=True)

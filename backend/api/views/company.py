@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
 from rest_framework.exceptions import NotFound
 from django.contrib.auth import get_user_model
-from .models import Company
-from .serializers import CompanySerializer
+from ..models import Company
+from ..serializers.serializers import CompanySerializer
 from django.db.models import Prefetch
 from django.db.models import Q
 User = get_user_model()

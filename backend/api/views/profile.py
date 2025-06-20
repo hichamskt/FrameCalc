@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
-from .models import Profile, Company
-from .serializers import ProfileSerializer , ProfileWithCompanySerializer
+from ..models import Profile, Company
+from ..serializers.serializers import ProfileSerializer , ProfileWithCompanySerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 

@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
-from .models import ProfileAluminum , Profile
-from .serializers import ProfileAluminumSerializer
+from ..models import ProfileAluminum , Profile
+from ..serializers.serializers import ProfileAluminumSerializer
 from django.shortcuts import get_object_or_404
 
 class ProfileAluminumListCreateView(generics.ListCreateAPIView):

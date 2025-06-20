@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (
+from ..models import (
     User, Company, Material, Profile, ProfileAluminum, StructureType,
     StructureSubType, SubtypeRequirement, MaterialRequirement,
     AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType , Category,
@@ -240,12 +240,27 @@ class StructureTypeSerializer(serializers.ModelSerializer):
 
 
 # StructureSubType Serializer
-class StructureSubTypeSerializer(serializers.ModelSerializer):
-    type = StructureTypeSerializer(read_only=True)
 
+class StructureSubTypeSerializer(serializers.ModelSerializer):
+    type_name = serializers.CharField(source='type.name', read_only=True)
+    image_url = serializers.SerializerMethodField()
+    
     class Meta:
         model = StructureSubType
-        fields = '__all__'
+        fields = [
+            'subtype_id', 
+            'type', 
+            'type_name',
+            'name', 
+            'typeimage',
+            'image_url'
+        ]
+        read_only_fields = ['subtype_id', 'type_name', 'image_url']
+    
+    def get_image_url(self, obj):
+        if obj.typeimage:
+            return self.context['request'].build_absolute_uri(obj.typeimage.url)
+        return None
 
 # SubtypeRequirement Serializer
 class SubtypeRequirementSerializer(serializers.ModelSerializer):

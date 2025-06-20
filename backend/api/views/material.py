@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
-from .models import Material , Company
-from .serializers import MaterialSerializer
+from ..models import Material , Company
+from ..serializers.serializers import MaterialSerializer
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
@@ -89,8 +89,8 @@ class CompanyMaterialsFilterView(generics.ListAPIView):
     
 from rest_framework import generics
 from django.shortcuts import get_object_or_404
-from .models import Material, Company
-from .serializers import MaterialSerializer
+from ..models import Material, Company
+from ..serializers.serializers import MaterialSerializer
 
 class PublicCompanyMaterialsFilterView(generics.ListAPIView):
    

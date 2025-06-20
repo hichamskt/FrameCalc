@@ -9,9 +9,9 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 # from .models import User
-from .serializers import UserSerializer , UserLoginSerializer , SupplyTypeSerializer
+from ..serializers.serializers import UserSerializer , UserLoginSerializer , SupplyTypeSerializer
 from django.contrib.auth import get_user_model 
-from .models import SupplyType
+from ..models import SupplyType
 
 
 
@@ -324,3 +324,4 @@ def supply_type_detail(request, pk):
     elif request.method == 'DELETE':
         supply_type.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
