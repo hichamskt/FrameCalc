@@ -8,6 +8,7 @@ from .views import profilealuminum
 from .views import structuretype
 from .views import structuresubtype
 from .views import Subtype_requirement
+from .views import SubtypeGlasseRequirement
 
 urlpatterns = [
     # Authentication
@@ -89,4 +90,14 @@ urlpatterns = [
     
     # Profile-specific requirements
     path('profiles/<int:profile_id>/subtype-requirements/',Subtype_requirement.ProfileSubtypeRequirementsView.as_view(), name='profile-subtype-requirements'),
+
+# SubtypeGlasseRequirement
+
+     path('glass-requirements/', 
+         SubtypeGlasseRequirement.SubtypeGlasseRequirementListCreateView.as_view(), name='glass-requirement-list'),
+    path('glass-requirements/<int:glassrequirement_id>/', SubtypeGlasseRequirement.SubtypeGlasseRequirementDetailView.as_view(), name='glass-requirement-detail'),
+    
+    # Specialized endpoints
+    path('structure-subtypes/<int:subtype_id>/glass-requirements/',SubtypeGlasseRequirement.SubtypeGlassRequirementsView.as_view(),name='subtype-glass-requirements'),
+    path('companies/<int:company_id>/glass-supplies/', SubtypeGlasseRequirement.CompanyGlassSuppliesView.as_view(), name='company-glass-supplies'),
 ]

@@ -195,6 +195,25 @@ class SubtypeRequirement(models.Model):
         return f"{self.subtype.name} - {self.profile.name} (W:{self.width}, H:{self.height})"
 
 
+class SubtypeGlasseRequirement(models.Model):
+    glassrequirement_id = models.AutoField(primary_key=True)
+    subtype = models.ForeignKey(StructureSubType, on_delete=models.CASCADE, related_name='glassrequirements')
+    width = models.DecimalField(max_digits=10, decimal_places=2)
+    height = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    companysupplier = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='glassesupplier')
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subtype', 'companysupplier'], 
+                name='unique_glass_requirement_per_subtype_supplier'
+            )
+        ]
+        ordering = ['subtype', 'companysupplier']
+    
+    def __str__(self):
+        return f"{self.subtype.name} - {self.companysupplier.name} (W:{self.width}, H:{self.height})"
 
 
 
