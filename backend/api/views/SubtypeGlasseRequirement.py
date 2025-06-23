@@ -2,6 +2,7 @@ from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from ..models import SubtypeGlasseRequirement, StructureSubType, Company
 from ..serializers.SubtypeGlasseRequirement import SubtypeGlasseRequirementSerializer
+from rest_framework.exceptions import ValidationError
 
 
 class SubtypeGlasseRequirementListCreateView(generics.ListCreateAPIView):

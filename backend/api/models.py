@@ -275,6 +275,32 @@ class AluminumRequirementItem(models.Model):
 
 
 
+class GlasseRequirementItem(models.Model):
+    glasse_item_id = models.AutoField(primary_key=True)
+    requirement = models.ForeignKey(
+        SubtypeGlasseRequirement, 
+        on_delete=models.CASCADE,
+        related_name='glass_items'
+    )
+    material = models.ForeignKey(
+        Material, 
+        on_delete=models.CASCADE,
+        related_name='glass_requirements'
+    )
+    width = models.DecimalField(max_digits=10, decimal_places=2)
+    height = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # REMOVED the unique constraint
+        ordering = ['-created_at']
+        verbose_name = "Glass Requirement Item"
+        verbose_name_plural = "Glass Requirement Items"
+
+    def __str__(self):
+        return f"{self.material.name} ({self.width}x{self.height}mm)"
+
+
 class MaterialRequirement(models.Model):
     req_item_id = models.AutoField(primary_key=True)
     requirement = models.ForeignKey(SubtypeRequirement, on_delete=models.CASCADE)

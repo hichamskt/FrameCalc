@@ -11,6 +11,7 @@ from .views import Subtype_requirement
 from .views import SubtypeGlasseRequirement
 from .views import subtype_accessories_requirement
 from .views import AluminumRequirementItem
+from .views import GlasseRequirementItem
 urlpatterns = [
     # Authentication
     path('register/', user.UserRegistrationView.as_view(), name='user-register'),
@@ -116,8 +117,14 @@ urlpatterns = [
   path('requirements/<int:requirement_id>/aluminum-items/', AluminumRequirementItem.RequirementAluminumItemsView.as_view(), name='requirement-aluminum-items'),
   path('aluminum-requirement-items/bulk/',AluminumRequirementItem.BulkAluminumRequirementItemCreateView.as_view(), name='bulk-aluminum-items-create'),
     
-  
-  
 
-
+  # GlassRequirementItem
+  path('glass-requirement-items/', GlasseRequirementItem.GlassRequirementItemListCreateView.as_view(), name='glass-item-list'),
+    path( 'glass-requirement-items/<int:glasse_item_id>/',  GlasseRequirementItem.GlassRequirementItemDetailView.as_view(),  name='glass-item-detail' ),
+   path( 'requirements/<int:requirement_id>/glass-items/', GlasseRequirementItem.RequirementGlassItemsView.as_view(),  name='requirement-glass-items' ),
+    path('glass-requirement-items/bulk/',GlasseRequirementItem.BulkGlassRequirementItemCreateView.as_view(), name='bulk-glass-items-create'),
+  path('requirements/<int:requirement_id>/glass-companies/', GlasseRequirementItem.GlassRequirementCompaniesView.as_view(), name='requirement-glass-companies'),
+   path('companies/<int:company_id>/glass-requirements/', GlasseRequirementItem.CompanyGlassRequirementsView.as_view(), name='company-glass-requirements'),
+    path('companies/<int:company_id>/requirements/<int:requirement_id>/glass-items/',GlasseRequirementItem.CompanyGlassRequirementItemsView.as_view(),name='company-requirement-glass-items'
+    ),
 ]
