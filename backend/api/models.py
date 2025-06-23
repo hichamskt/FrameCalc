@@ -244,9 +244,34 @@ class SubtypeAccessoriesRequirement(models.Model):
     def __str__(self):
         return f"{self.subtype.name} - {self.companysupplier.name}"
 
- 
+
    
 
+
+class AluminumRequirementItem(models.Model):
+    req_item_id = models.AutoField(primary_key=True)
+    requirement = models.ForeignKey(
+        SubtypeRequirement, 
+        on_delete=models.CASCADE,
+        related_name='aluminum_items'
+    )
+    profile_material = models.ForeignKey(
+        ProfileAluminum,
+        on_delete=models.CASCADE,
+        related_name='requirement_items'
+    )
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['requirement', 'profile_material'],
+                name='unique_material_per_requirement',
+                violation_error_message="Each requirement can only have one of each profile material"
+            )
+        ]
+        ordering = ['requirement', '-created_at']
 
 
 
@@ -256,11 +281,7 @@ class MaterialRequirement(models.Model):
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
 
-class AluminumRequirement(models.Model):
-    req_item_id = models.AutoField(primary_key=True)
-    requirement = models.ForeignKey(SubtypeRequirement, on_delete=models.CASCADE)
-    profile_material = models.ForeignKey(ProfileAluminum, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+
 
 class Sketch(models.Model):
     sketch_id = models.AutoField(primary_key=True)

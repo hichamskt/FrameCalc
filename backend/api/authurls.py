@@ -10,7 +10,7 @@ from .views import structuresubtype
 from .views import Subtype_requirement
 from .views import SubtypeGlasseRequirement
 from .views import subtype_accessories_requirement
-
+from .views import AluminumRequirementItem
 urlpatterns = [
     # Authentication
     path('register/', user.UserRegistrationView.as_view(), name='user-register'),
@@ -100,17 +100,24 @@ urlpatterns = [
     path('structure-subtypes/<int:subtype_id>/glass-requirements/',SubtypeGlasseRequirement.SubtypeGlassRequirementsView.as_view(),name='subtype-glass-requirements'),
     path('companies/<int:company_id>/glass-supplies/', SubtypeGlasseRequirement.CompanyGlassSuppliesView.as_view(), name='company-glass-supplies'),
 # SubtypeAccessories-requirements
-path('accessories-requirements/',  subtype_accessories_requirement.SubtypeAccessoriesRequirementListCreateView.as_view(),
-         name='accessories-requirement-list-create'),
-    path('accessories-requirements/<int:accessoriesrequirement_id>/',
-         subtype_accessories_requirement.SubtypeAccessoriesRequirementDetailView.as_view(),
-         name='accessories-requirement-detail'),
+
+    path('accessories-requirements/', subtype_accessories_requirement.SubtypeAccessoriesRequirementListCreateView.as_view(),name='accessories-requirement-list'),
+    path('accessories-requirements/<int:accessoriesrequirement_id>/', subtype_accessories_requirement.SubtypeAccessoriesRequirementDetailView.as_view(),name='accessories-requirement-detail'),
     
-    # Specialized filtered endpoints
-    path('structure-subtypes/<int:subtype_id>/accessories-requirements/',
-         subtype_accessories_requirement.SubtypeAccessoriesRequirementsView.as_view(),
-         name='subtype-accessories-requirements'),
-    path('companies/<int:company_id>/accessories-supplies/',
-         subtype_accessories_requirement.CompanyAccessoriesSuppliesView.as_view(),
-         name='company-accessories-supplies'),
+    path('structure-subtypes/<int:subtype_id>/accessories-requirements/', subtype_accessories_requirement.SubtypeAccessoriesRequirementsView.as_view(),name='subtype-accessories-requirements'),
+    path('companies/<int:company_id>/accessories-supplies/', subtype_accessories_requirement.CompanyAccessoriesSuppliesView.as_view(),name='company-accessories-supplies'),
+
+# AluminumRequirementItem
+
+  path('aluminum-requirement-items/',AluminumRequirementItem.AluminumRequirementItemListCreateView.as_view(), name='aluminum-item-list'),
+  path('aluminum-requirement-items/<int:req_item_id>/', AluminumRequirementItem.AluminumRequirementItemDetailView.as_view(), name='aluminum-item-detail'),
+    
+  
+  path('requirements/<int:requirement_id>/aluminum-items/', AluminumRequirementItem.RequirementAluminumItemsView.as_view(), name='requirement-aluminum-items'),
+  path('aluminum-requirement-items/bulk/',AluminumRequirementItem.BulkAluminumRequirementItemCreateView.as_view(), name='bulk-aluminum-items-create'),
+    
+  
+  
+
+
 ]

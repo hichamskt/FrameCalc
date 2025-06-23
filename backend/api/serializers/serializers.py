@@ -2,7 +2,7 @@ from rest_framework import serializers
 from ..models import (
     User, Company, Material, Profile, ProfileAluminum, StructureType,
     StructureSubType, SubtypeRequirement, MaterialRequirement,
-    AluminumRequirement, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType , Category,
+    AluminumRequirementItem, Sketch, Quotation, QuotationMaterialItem, QuotationAluminumItem , SupplyType , Category,
 )
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -261,7 +261,7 @@ class StructureSubTypeSerializer(serializers.ModelSerializer):
         if obj.typeimage:
             return self.context['request'].build_absolute_uri(obj.typeimage.url)
         return None
-
+'''
 # SubtypeRequirement Serializer
 class SubtypeRequirementSerializer(serializers.ModelSerializer):
     subtype = StructureSubTypeSerializer(read_only=True)
@@ -279,7 +279,7 @@ class MaterialRequirementSerializer(serializers.ModelSerializer):
 # AluminumRequirement Serializer
 class AluminumRequirementSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AluminumRequirement
+        model = AluminumRequirementItem
         fields = '__all__'
 
 # Sketch Serializer
@@ -311,3 +311,6 @@ class QuotationAluminumItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationAluminumItem
         fields = '__all__'
+
+        
+'''
