@@ -205,3 +205,16 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/structure-subtypes/<int:subtype_id>/accessories-requirements/`                          | List accessories requirements for a specific subtype         |
 | GET    | `/companies/<int:company_id>/accessories-supplies/`                                       | List all accessories supplies for a specific company         |
 
+---
+
+### 🪵 Aluminum Requirement Item Management
+
+| Method | Endpoint                                                                                      | Description                                                           |
+|--------|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| GET    | `/aluminum-requirement-items/`                                                                | List all aluminum requirement items                                   |
+| POST   | `/aluminum-requirement-items/`                                                                | Create a new aluminum requirement item                                |
+| GET    | `/aluminum-requirement-items/<int:req_item_id>/`                                              | Retrieve a specific aluminum requirement item                         |
+| PUT    | `/aluminum-requirement-items/<int:req_item_id>/`                                              | Update a specific aluminum requirement item                           |
+| DELETE | `/aluminum-requirement-items/<int:req_item_id>/`                                              | Delete a specific aluminum requirement item                           |
+| GET    | `/requirements/<int:requirement_id>/aluminum-items/`                                          | Get all aluminum items linked to a specific requirement               |
+| POST   | `/aluminum-requirement-items/bulk/`                                                           | Bulk create multiple aluminum requirement items                       |
