@@ -175,3 +175,18 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | DELETE | `/subtype-requirements/<int:requirement_id>/`                         | Delete a specific subtype requirement            |
 | GET    | `/structure-subtypes/<int:subtype_id>/requirements/`                  | List requirements related to a specific subtype  |
 | GET    | `/profiles/<int:profile_id>/subtype-requirements/`                   | List requirements related to a specific profile  |
+
+---
+
+### 🧿 Glass Requirement Management
+
+| Method | Endpoint                                                                      | Description                                             |
+|--------|-------------------------------------------------------------------------------|---------------------------------------------------------|
+| GET    | `/glass-requirements/`                                                        | List all glass requirements                             |
+| POST   | `/glass-requirements/`                                                        | Create a new glass requirement                          |
+| GET    | `/glass-requirements/<int:glassrequirement_id>/`                              | Retrieve a specific glass requirement                   |
+| PUT    | `/glass-requirements/<int:glassrequirement_id>/`                              | Update a specific glass requirement                     |
+| DELETE | `/glass-requirements/<int:glassrequirement_id>/`                              | Delete a specific glass requirement                     |
+| GET    | `/structure-subtypes/<int:subtype_id>/glass-requirements/`                    | List glass requirements related to a specific subtype   |
+| GET    | `/companies/<int:company_id>/glass-supplies/`                                 | List all glass supplies associated with a company       |
+
