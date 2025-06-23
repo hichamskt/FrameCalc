@@ -9,6 +9,7 @@ from .views import structuretype
 from .views import structuresubtype
 from .views import Subtype_requirement
 from .views import SubtypeGlasseRequirement
+from .views import subtype_accessories_requirement
 
 urlpatterns = [
     # Authentication
@@ -93,11 +94,23 @@ urlpatterns = [
 
 # SubtypeGlasseRequirement
 
-     path('glass-requirements/', 
-         SubtypeGlasseRequirement.SubtypeGlasseRequirementListCreateView.as_view(), name='glass-requirement-list'),
+     path('glass-requirements/', SubtypeGlasseRequirement.SubtypeGlasseRequirementListCreateView.as_view(), name='glass-requirement-list'),
     path('glass-requirements/<int:glassrequirement_id>/', SubtypeGlasseRequirement.SubtypeGlasseRequirementDetailView.as_view(), name='glass-requirement-detail'),
     
-    # Specialized endpoints
     path('structure-subtypes/<int:subtype_id>/glass-requirements/',SubtypeGlasseRequirement.SubtypeGlassRequirementsView.as_view(),name='subtype-glass-requirements'),
     path('companies/<int:company_id>/glass-supplies/', SubtypeGlasseRequirement.CompanyGlassSuppliesView.as_view(), name='company-glass-supplies'),
+# SubtypeAccessories-requirements
+path('accessories-requirements/',  subtype_accessories_requirement.SubtypeAccessoriesRequirementListCreateView.as_view(),
+         name='accessories-requirement-list-create'),
+    path('accessories-requirements/<int:accessoriesrequirement_id>/',
+         subtype_accessories_requirement.SubtypeAccessoriesRequirementDetailView.as_view(),
+         name='accessories-requirement-detail'),
+    
+    # Specialized filtered endpoints
+    path('structure-subtypes/<int:subtype_id>/accessories-requirements/',
+         subtype_accessories_requirement.SubtypeAccessoriesRequirementsView.as_view(),
+         name='subtype-accessories-requirements'),
+    path('companies/<int:company_id>/accessories-supplies/',
+         subtype_accessories_requirement.CompanyAccessoriesSuppliesView.as_view(),
+         name='company-accessories-supplies'),
 ]
