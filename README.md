@@ -218,3 +218,20 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | DELETE | `/aluminum-requirement-items/<int:req_item_id>/`                                              | Delete a specific aluminum requirement item                           |
 | GET    | `/requirements/<int:requirement_id>/aluminum-items/`                                          | Get all aluminum items linked to a specific requirement               |
 | POST   | `/aluminum-requirement-items/bulk/`                                                           | Bulk create multiple aluminum requirement items                       |
+
+--- 
+
+### 🪟 Glass Requirement Item Management
+
+| Method | Endpoint                                                                                             | Description                                                            |
+|--------|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| GET    | `/glass-requirement-items/`                                                                          | List all glass requirement items                                       |
+| POST   | `/glass-requirement-items/`                                                                          | Create a new glass requirement item                                    |
+| GET    | `/glass-requirement-items/<int:glasse_item_id>/`                                                     | Retrieve a specific glass requirement item                             |
+| PUT    | `/glass-requirement-items/<int:glasse_item_id>/`                                                     | Update a specific glass requirement item                               |
+| DELETE | `/glass-requirement-items/<int:glasse_item_id>/`                                                     | Delete a specific glass requirement item                               |
+| GET    | `/requirements/<int:requirement_id>/glass-items/`                                                    | Get all glass items linked to a specific requirement                   |
+| POST   | `/glass-requirement-items/bulk/`                                                                      | Bulk create multiple glass requirement items                           |
+| GET    | `/requirements/<int:requirement_id>/glass-companies/`                                                | Get companies associated with a specific requirement's glass items     |
+| GET    | `/companies/<int:company_id>/glass-requirements/`                                                    | List all glass requirements associated with a specific company         |
+| GET    | `/companies/<int:company_id>/requirements/<int:requirement_id>/glass-items/`                         | Get all glass items of a company for a specific requirement            |
