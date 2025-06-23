@@ -190,3 +190,18 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/structure-subtypes/<int:subtype_id>/glass-requirements/`                    | List glass requirements related to a specific subtype   |
 | GET    | `/companies/<int:company_id>/glass-supplies/`                                 | List all glass supplies associated with a company       |
 
+
+---
+
+### 🧰 Accessories Requirement Management
+
+| Method | Endpoint                                                                                  | Description                                                  |
+|--------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| GET    | `/accessories-requirements/`                                                              | List all accessories requirements                            |
+| POST   | `/accessories-requirements/`                                                              | Create a new accessories requirement                         |
+| GET    | `/accessories-requirements/<int:accessoriesrequirement_id>/`                              | Retrieve a specific accessories requirement                  |
+| PUT    | `/accessories-requirements/<int:accessoriesrequirement_id>/`                              | Update a specific accessories requirement                    |
+| DELETE | `/accessories-requirements/<int:accessoriesrequirement_id>/`                              | Delete a specific accessories requirement                    |
+| GET    | `/structure-subtypes/<int:subtype_id>/accessories-requirements/`                          | List accessories requirements for a specific subtype         |
+| GET    | `/companies/<int:company_id>/accessories-supplies/`                                       | List all accessories supplies for a specific company         |
+
