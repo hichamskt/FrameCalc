@@ -251,3 +251,19 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/requirements/<int:requirement_id>/accessories-items/`                                                      | Get all accessories items linked to a specific requirement                     |
 | POST   | `/accessories-requirement-items/bulk/`                                                                       | Bulk create multiple accessories requirement items                             |
 | GET    | `/requirements/<int:requirement_id>/companies/<int:company_id>/accessories-items/`                          | Get company-specific accessories items for a given requirement                 |
+
+---
+
+### ✏️ Sketch Management
+
+| Method | Endpoint                                      | Description                                     |
+|--------|-----------------------------------------------|-------------------------------------------------|
+| GET    | `/sketches/`                                  | List all sketches                               |
+| POST   | `/sketches/`                                  | Create a new sketch                             |
+| GET    | `/sketches/<int:sketch_id>/`                  | Retrieve a specific sketch by its ID            |
+| PUT    | `/sketches/<int:sketch_id>/`                  | Update a specific sketch                        |
+| DELETE | `/sketches/<int:sketch_id>/`                  | Delete a specific sketch                        |
+| GET    | `/users/<uuid:user_id>/sketches/`             | List all sketches created by a specific user    |
+
+
+---
