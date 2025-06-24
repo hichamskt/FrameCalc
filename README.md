@@ -237,3 +237,17 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/companies/<int:company_id>/requirements/<int:requirement_id>/glass-items/`                         | Get all glass items of a company for a specific requirement            |
 
 
+---
+
+### 🧰 Accessories Requirement Item Management
+
+| Method | Endpoint                                                                                                     | Description                                                                    |
+|--------|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| GET    | `/accessories-requirement-items/`                                                                            | List all accessories requirement items                                         |
+| POST   | `/accessories-requirement-items/`                                                                            | Create a new accessories requirement item                                      |
+| GET    | `/accessories-requirement-items/<int:req_item_id>/`                                                          | Retrieve a specific accessories requirement item                               |
+| PUT    | `/accessories-requirement-items/<int:req_item_id>/`                                                          | Update a specific accessories requirement item                                 |
+| DELETE | `/accessories-requirement-items/<int:req_item_id>/`                                                          | Delete a specific accessories requirement item                                 |
+| GET    | `/requirements/<int:requirement_id>/accessories-items/`                                                      | Get all accessories items linked to a specific requirement                     |
+| POST   | `/accessories-requirement-items/bulk/`                                                                       | Bulk create multiple accessories requirement items                             |
+| GET    | `/requirements/<int:requirement_id>/companies/<int:company_id>/accessories-items/`                          | Get company-specific accessories items for a given requirement                 |
