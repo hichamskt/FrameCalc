@@ -1,18 +1,22 @@
 from django.urls import path
-from .views import user
-from .views import company
-from .views import category
-from .views import material
-from .views import profile
-from .views import profilealuminum
-from .views import structuretype
-from .views import structuresubtype
-from .views import Subtype_requirement
-from .views import SubtypeGlasseRequirement
-from .views import subtype_accessories_requirement
-from .views import AluminumRequirementItem
-from .views import GlasseRequirementItem
-from .views import AccessoriesRequirementItem
+from .views import (
+    user,
+    company,
+    category,
+    material,
+    profile,
+    profilealuminum,
+    structuretype,
+    structuresubtype,
+    Subtype_requirement,
+    SubtypeGlasseRequirement,
+    subtype_accessories_requirement,
+    AluminumRequirementItem,
+    GlasseRequirementItem,
+    AccessoriesRequirementItem,
+    Sketch,
+)
+
 urlpatterns = [
     # Authentication
     path('register/', user.UserRegistrationView.as_view(), name='user-register'),
@@ -134,14 +138,19 @@ urlpatterns = [
     path('accessories-requirement-items/', AccessoriesRequirementItem.AccessoriesRequirementItemListCreateView.as_view(),  name='accessories-item-list' ),
     path('accessories-requirement-items/<int:req_item_id>/', AccessoriesRequirementItem.AccessoriesRequirementItemDetailView.as_view(), name='accessories-item-detail' ),
     
-    # Requirement-specific endpoints
+   
     path('requirements/<int:requirement_id>/accessories-items/', AccessoriesRequirementItem.RequirementAccessoriesItemsView.as_view(), name='requirement-accessories-items' ),
     
-    # Bulk operations
+    
     path( 'accessories-requirement-items/bulk/', AccessoriesRequirementItem.BulkAccessoriesRequirementItemCreateView.as_view(), name='bulk-accessories-items-create' ),
 
      path('requirements/<int:requirement_id>/companies/<int:company_id>/accessories-items/',AccessoriesRequirementItem.CompanyAccessoriesRequirementItemsView.as_view(),name='company-requirement-accessories-items'
     ),
+
+    # Sketch
+    path('sketches/', Sketch.SketchListCreateView.as_view(), name='sketch-list'),
+    path('sketches/<int:sketch_id>/', Sketch.SketchDetailView.as_view(), name='sketch-detail'),
+    path('users/<uuid:user_id>/sketches/', Sketch.UserSketchesView.as_view(), name='user-sketches'),
 
 
 ]

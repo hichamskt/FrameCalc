@@ -342,11 +342,35 @@ class AccessoriesRequirementItem(models.Model):
 
 class Sketch(models.Model):
     sketch_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        related_name='sketches'
+    )
     shape = models.CharField(max_length=50)
     width = models.DecimalField(max_digits=10, decimal_places=2)
     height = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.ImageField(
+        upload_to='sketches/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])]
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Sketches"
+
+    def __str__(self):
+        return f"{self.shape} sketch ({self.width}x{self.height}) by {self.user.email}"
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            self.image.delete()
+        super().delete(*args, **kwargs)
+    
+    
 
 class Quotation(models.Model):
     STATUS_CHOICES = [
