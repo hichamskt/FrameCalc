@@ -12,6 +12,7 @@ from .views import SubtypeGlasseRequirement
 from .views import subtype_accessories_requirement
 from .views import AluminumRequirementItem
 from .views import GlasseRequirementItem
+from .views import AccessoriesRequirementItem
 urlpatterns = [
     # Authentication
     path('register/', user.UserRegistrationView.as_view(), name='user-register'),
@@ -125,6 +126,22 @@ urlpatterns = [
     path('glass-requirement-items/bulk/',GlasseRequirementItem.BulkGlassRequirementItemCreateView.as_view(), name='bulk-glass-items-create'),
   path('requirements/<int:requirement_id>/glass-companies/', GlasseRequirementItem.GlassRequirementCompaniesView.as_view(), name='requirement-glass-companies'),
    path('companies/<int:company_id>/glass-requirements/', GlasseRequirementItem.CompanyGlassRequirementsView.as_view(), name='company-glass-requirements'),
-    path('companies/<int:company_id>/requirements/<int:requirement_id>/glass-items/',GlasseRequirementItem.CompanyGlassRequirementItemsView.as_view(),name='company-requirement-glass-items'
+    path('companies/<int:company_id>/requirements/<int:requirement_id>/glass-items/',GlasseRequirementItem.CompanyGlassRequirementItemsView.as_view(),name='company-requirement-glass-items' ),
+    
+    
+    # accessories-requirement-items
+
+    path('accessories-requirement-items/', AccessoriesRequirementItem.AccessoriesRequirementItemListCreateView.as_view(),  name='accessories-item-list' ),
+    path('accessories-requirement-items/<int:req_item_id>/', AccessoriesRequirementItem.AccessoriesRequirementItemDetailView.as_view(), name='accessories-item-detail' ),
+    
+    # Requirement-specific endpoints
+    path('requirements/<int:requirement_id>/accessories-items/', AccessoriesRequirementItem.RequirementAccessoriesItemsView.as_view(), name='requirement-accessories-items' ),
+    
+    # Bulk operations
+    path( 'accessories-requirement-items/bulk/', AccessoriesRequirementItem.BulkAccessoriesRequirementItemCreateView.as_view(), name='bulk-accessories-items-create' ),
+
+     path('requirements/<int:requirement_id>/companies/<int:company_id>/accessories-items/',AccessoriesRequirementItem.CompanyAccessoriesRequirementItemsView.as_view(),name='company-requirement-accessories-items'
     ),
+
+
 ]

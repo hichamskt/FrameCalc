@@ -235,3 +235,5 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 | GET    | `/requirements/<int:requirement_id>/glass-companies/`                                                | Get companies associated with a specific requirement's glass items     |
 | GET    | `/companies/<int:company_id>/glass-requirements/`                                                    | List all glass requirements associated with a specific company         |
 | GET    | `/companies/<int:company_id>/requirements/<int:requirement_id>/glass-items/`                         | Get all glass items of a company for a specific requirement            |
+
+

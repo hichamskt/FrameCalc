@@ -5,6 +5,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 from django.core.validators import FileExtensionValidator
+from django.core.validators import MinValueValidator
+
 
 class User(AbstractUser):
    
@@ -301,11 +303,40 @@ class GlasseRequirementItem(models.Model):
         return f"{self.material.name} ({self.width}x{self.height}mm)"
 
 
-class MaterialRequirement(models.Model):
+
+class AccessoriesRequirementItem(models.Model):
     req_item_id = models.AutoField(primary_key=True)
-    requirement = models.ForeignKey(SubtypeRequirement, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    requirement = models.ForeignKey(
+        'SubtypeAccessoriesRequirement',
+        on_delete=models.CASCADE,
+        related_name='accessories_items'
+    )
+    material = models.ForeignKey(
+        'Material',
+        on_delete=models.CASCADE,
+        related_name='accessories_requirements'
+    )
+    quantity = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        default=1.0,
+        validators=[MinValueValidator(0.01)]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Accessories Requirement Item"
+        verbose_name_plural = "Accessories Requirement Items"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['requirement', 'material'],
+                name='unique_accessories_per_requirement'
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.material.name} ({self.quantity})"
 
 
 
