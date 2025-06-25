@@ -1,12 +1,11 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 
+from decimal import Decimal
+import math
 
 class User(AbstractUser):
    
@@ -370,34 +369,69 @@ class Sketch(models.Model):
             self.image.delete()
         super().delete(*args, **kwargs)
     
-    
+
+
+
 
 class Quotation(models.Model):
-    STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('sent', 'Sent'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ]
-    
     quotation_id = models.AutoField(primary_key=True)
-    sketch = models.ForeignKey(Sketch, on_delete=models.SET_NULL, null=True)
-    subtype = models.ForeignKey(StructureSubType, on_delete=models.SET_NULL, null=True)
-    profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    sketch = models.ForeignKey('Sketch', on_delete=models.SET_NULL, null=True)
+    subtype = models.ForeignKey('StructureSubType', on_delete=models.SET_NULL, null=True)
+    profile = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True)
+    accessoriesrequirement = models.ForeignKey('SubtypeAccessoriesRequirement', on_delete=models.SET_NULL, null=True)
+    glassrequirement = models.ForeignKey('SubtypeGlasseRequirement', on_delete=models.SET_NULL, null=True)
+    requirement_id = models.ForeignKey('SubtypeRequirement', on_delete=models.SET_NULL, null=True)
+    
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+
+    def calculate_total(self):
+        """Calculate total price from all items"""
+        total = Decimal('0')
+        
+        # Sum material items
+        for item in self.quotationmaterialitem_set.all():
+            total += item.unit_price * item.quantity
+            
+        # Sum aluminum items (rounded to nearest 0.5)
+        for item in self.quotationaluminumitem_set.all():
+            total += item.unit_price * item.quantity
+            
+        self.total_price = total
+        self.save()
+        return total
 
 class QuotationMaterialItem(models.Model):
     item_id = models.AutoField(primary_key=True)
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    material = models.ForeignKey('Material', on_delete=models.CASCADE)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['quotation', 'material'],
+                name='unique_material_per_quotation'
+            )
+        ]
 
 class QuotationAluminumItem(models.Model):
     item_id = models.AutoField(primary_key=True)
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE)
-    profile_material = models.ForeignKey(ProfileAluminum, on_delete=models.CASCADE)
+    profile_material = models.ForeignKey('ProfileAluminum', on_delete=models.CASCADE)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        # Round quantity to nearest 0.5 (1, 1.5, 2, etc.)
+        self.quantity = Decimal(math.floor(self.quantity * 2) / 2)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['quotation', 'profile_material'],
+                name='unique_aluminum_per_quotation'
+            )
+        ]

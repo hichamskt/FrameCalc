@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework import serializers
 from .views import (
     user,
     company,
@@ -15,7 +16,10 @@ from .views import (
     GlasseRequirementItem,
     AccessoriesRequirementItem,
     Sketch,
+    Quotation,
+    
 )
+
 
 urlpatterns = [
     # Authentication
@@ -151,6 +155,25 @@ urlpatterns = [
     path('sketches/', Sketch.SketchListCreateView.as_view(), name='sketch-list'),
     path('sketches/<int:sketch_id>/', Sketch.SketchDetailView.as_view(), name='sketch-detail'),
     path('users/<uuid:user_id>/sketches/', Sketch.UserSketchesView.as_view(), name='user-sketches'),
+
+
+    #quotation
+
+
+    path('quotations/', Quotation.QuotationListCreateView.as_view(), name='quotation-list-create'),
+     path('quotations/<int:quotation_id>/', Quotation.QuotationDetailView.as_view(), name='quotation-detail'),
+    
+    # Quotation calculation
+    path('quotations/create/', Quotation.create_quotation_with_calculation, name='quotation-create-with-calculation'),
+     path('quotations/<int:quotation_id>/recalculate/', Quotation.recalculate_quotation, name='quotation-recalculate'),
+    
+    # Helper endpoints
+    path('subtypes/<int:subtype_id>/requirements/', Quotation.get_requirements_for_subtype, name='subtype-requirements'),
+     path('user/sketches/', Quotation.user_sketches, name='user-sketches'),
+
+
+  path('quotation-material-items/<int:item_id>/', Quotation.QuotationMaterialItemUpdateView.as_view(), name='update-material-item'),
+path('quotation-aluminum-items/<int:item_id>/', Quotation.QuotationAluminumItemUpdateView.as_view(), name='update-aluminum-item'),
 
 
 ]
