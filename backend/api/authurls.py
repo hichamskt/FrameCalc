@@ -176,6 +176,7 @@ urlpatterns = [
 path('quotation-aluminum-items/<int:item_id>/', Quotation.QuotationAluminumItemUpdateView.as_view(), name='update-aluminum-item'),
 
 
-path('optimize-cut/', cutting.optimize_alucobond_cut, name='optimize_cut')
-
+ path('optimize-cut/', cutting.optimize_alucobond_cut, name='optimize_cut'),
+    path('download/<str:filename>/', cutting.download_cut_file, name='download_cut_file'),
 ]
+

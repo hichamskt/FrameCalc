@@ -313,3 +313,29 @@ This endpoint takes a defined Alucobond sheet size and a list of required piece 
     { "width": 1000, "height": 500, "quantity": 2 }
   ]
 }
+
+
+# Project Dependencies
+
+This Django backend project for Alucobond sheet cutting optimization uses the following main libraries:
+
+| Library      | Purpose                                                                                             | Link                                                                                 |
+|--------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| **Django**   | High-level Python web framework used to build the backend API and serve endpoints                 | [https://www.djangoproject.com/](https://www.djangoproject.com/)                     |
+| **rectpack** | Efficient 2D bin packing algorithm used to optimally arrange rectangular pieces on the sheet     | [https://github.com/secnot/rectpack](https://github.com/secnot/rectpack)             |
+| **svgwrite** | Library to programmatically generate SVG images representing the cutting layouts                  | [https://github.com/mozman/svgwrite](https://github.com/mozman/svgwrite)             |
+| **cairosvg** | Converts SVG files to PDF format, enabling PDF downloads of cutting layouts                       | [https://github.com/Kozea/CairoSVG](https://github.com/Kozea/CairoSVG)                |
+
+---
+
+## System Dependencies for `cairosvg`
+
+`cairosvg` requires native Cairo graphics libraries installed on your system.
+
+- **On Linux (Ubuntu/Debian):**
+
+  ```bash
+  sudo apt-get update
+  sudo apt-get install libcairo2 libpango1.0-0 libgdk-pixbuf2.0-0
+  
+  ```
