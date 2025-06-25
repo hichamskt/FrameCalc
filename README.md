@@ -267,3 +267,29 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 
 
 ---
+
+## 📄 Quotation APIs
+
+### 🔧 Quotation CRUD
+
+| Method | Endpoint                               | Description                         |
+|--------|----------------------------------------|-------------------------------------|
+| GET    | `/api/quotations/`                     | List all quotations                 |
+| POST   | `/api/quotations/`                     | Create a new quotation              |
+| GET    | `/api/quotations/<quotation_id>/`      | Retrieve details of a quotation     |
+
+---
+
+### 🔄 Quotation 
+
+| Method | Endpoint                                             | Description                           |
+|--------|------------------------------------------------------|---------------------------------------|
+| POST   | `/api/quotations/create/`                            | Create a quotation with calculation   |
+| POST   | `/api/quotations/<quotation_id>/recalculate/`        | Recalculate an existing quotation     |
+|--------|-----------------------------------------------------------------|----------------------------------------|
+| PUT    | `/api/quotation-material-items/<item_id>/`                      | Update a specific material item        |
+| PUT    | `/api/quotation-aluminum-items/<item_id>/`                      | Update a specific aluminum item        |
+| Method | Endpoint                                          | Description                             |
+|--------|---------------------------------------------------|-----------------------------------------|
+| GET    | `/api/subtypes/<subtype_id>/requirements/`        | Get requirements for a given subtype    |
+| GET    | `/api/user/sketches/`                             | List all sketches belonging to the user |
