@@ -16,7 +16,7 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 
 ## Data Model Overview
 ### Entity-Relationship Diagram (ERD) 
-  ![Image](https://github.com/user-attachments/assets/559ab32d-6aba-46e0-993b-82e83915270)
+  ![Image](https://github.com/user-attachments/assets/1c4c8ab6-bb28-406b-bd09-00a992f0bf92)
 
 ## 📘 API Endpoints Documentation
 
