@@ -17,7 +17,7 @@ from .views import (
     AccessoriesRequirementItem,
     Sketch,
     Quotation,
-    
+    cutting
 )
 
 
@@ -175,5 +175,7 @@ urlpatterns = [
   path('quotation-material-items/<int:item_id>/', Quotation.QuotationMaterialItemUpdateView.as_view(), name='update-material-item'),
 path('quotation-aluminum-items/<int:item_id>/', Quotation.QuotationAluminumItemUpdateView.as_view(), name='update-aluminum-item'),
 
+
+path('optimize-cut/', cutting.optimize_alucobond_cut, name='optimize_cut')
 
 ]

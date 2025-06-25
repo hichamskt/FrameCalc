@@ -293,3 +293,23 @@ The visual design of **FrameCalc** was built in Figma to deliver a clean, profes
 |--------|---------------------------------------------------|-----------------------------------------|
 | GET    | `/api/subtypes/<subtype_id>/requirements/`        | Get requirements for a given subtype    |
 | GET    | `/api/user/sketches/`                             | List all sketches belonging to the user |
+
+## ✂️ Alucobond Cutting Optimization API
+
+| Method | Endpoint             | Description                                     |
+|--------|----------------------|-------------------------------------------------|
+| POST   | `/api/optimize-cut/` | Optimize cutting layout to reduce material waste |
+
+**Description**:  
+This endpoint takes a defined Alucobond sheet size and a list of required piece dimensions, and returns the most efficient cutting strategy to minimize waste.
+
+**Example Payload**:
+```json
+{
+  "sheet_width": 3000,
+  "sheet_height": 1500,
+  "pieces": [
+    { "width": 500, "height": 1000, "quantity": 4 },
+    { "width": 1000, "height": 500, "quantity": 2 }
+  ]
+}
