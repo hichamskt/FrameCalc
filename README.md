@@ -339,3 +339,85 @@ This Django backend project for Alucobond sheet cutting optimization uses the fo
   sudo apt-get install libcairo2 libpango1.0-0 libgdk-pixbuf2.0-0
   
   ```
+
+
+  # Model Training
+
+This project uses a custom YOLO-based object detection model to detect handwritten dimensions labeled with prefixes **`w`** (width) and **`h`** (height) on images of sketches.
+
+## Dataset
+
+- Synthetic dataset generated with images containing handwritten numbers prefixed by `w` and `h`.
+- Each image is annotated in YOLO format:
+  - Class `0` for width (`wXXX`)
+  - Class `1` for height (`hXXX`)
+
+## Training Setup
+
+1. **Install dependencies**:
+
+```bash
+pip install ultralytics torch torchvision
+
+```
+2. **Organize your dataset:**:
+
+
+```bash
+/dataset
+  /images
+    /train
+    /val
+  /labels
+    /train
+    /val
+
+
+```
+
+3. **Create a data.yaml file describing dataset paths and classes**:
+
+
+```bash
+train: ./dataset/images/train
+val: ./dataset/images/val
+
+nc: 2
+names: ['width', 'height']
+
+
+```
+## Train the Model
+- Run training using Ultralytics YOLO:
+
+```bash
+yolo task=detect mode=train model=yolov8n.pt data=data.yaml epochs=100 imgsz=640
+```
+ - Training results (best weights) will be saved in:
+ ```bash
+
+ runs/detect/train/weights/best.pt
+
+```
+## Inference / Testing
+After training, use your model to detect dimensions on new images:
+
+```bash
+
+from ultralytics import YOLO
+
+model = YOLO('runs/detect/train/weights/best.pt')
+results = model.predict(source='path/to/test_images', save=True)
+
+```
+
+## References
+
+- [Ultralytics YOLO Documentation](https://docs.ultralytics.com/)
+- [YOLOv8 GitHub Repository](https://github.com/ultralytics/ultralytics)
+- [Generating Synthetic Handwritten Datasets](https://paperswithcode.com/task/handwriting-recognition)
+
+---
+
+
+
