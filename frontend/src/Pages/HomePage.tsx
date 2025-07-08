@@ -1,3 +1,4 @@
+import FirstSection from "../components/FirstSection"
 import Header from "../components/Header"
 import LandingPage from "../components/LandingPage"
 
@@ -8,6 +9,7 @@ function HomePage() {
     <div className="bg-black ">
         <Header />
         <LandingPage />
+        <FirstSection />
     </div>
   )
 }
