@@ -1,5 +1,5 @@
 import windowimg from "../assets/image1.png"
-import { useEffect, useRef } from "react";
+
 
 
 function FirstSection() {
@@ -20,29 +20,30 @@ export default FirstSection
 
 function Heading (){
 
- const ref = useRef<HTMLParagraphElement | null>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        el.classList.add("animate-fade-in-up");
-        observer.unobserve(el);
-      }
-    });
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+ 
+ 
+ 
 
 
 return(
-      <div ref={ref} className="container  text-white mt-[60px] pt-[50px] sm:mx-auto mx-[5px] text-center md:text-5xl sm:text-3xl text-2xl leading-tight sm:leading-snug md:leading-normal lg:leading-relaxed  font-normal  opacity-0 translate-y-4 animate-fade-in-up  ">
-        <p>Simplify your workflow. Power it with </p>
-        <p>Vision and precision..</p>
-        <button className="bg-white text-black px-10 py-2 cursor-pointer  hover:bg-[#7E89AC] text-3xl font-normal rounded transition-all duration-300">Get started today</button>
-    </div>
+     <div
+  data-aos="fade-up"
+  data-aos-delay="200"
+  data-aos-duration="1000"
+  className="container text-white mt-[60px] pt-[50px] sm:mx-auto mx-[5px] text-center 
+             text-2xl sm:text-3xl md:text-5xl font-normal 
+             leading-tight sm:leading-snug md:leading-normal lg:leading-relaxed"
+>
+  <p>Simplify your workflow. Power it with</p>
+  <p>Vision and precision.</p>
+
+  <button
+    className="mt-6 bg-white text-black px-10 py-2 text-xl md:text-2xl font-medium 
+               rounded transition-all duration-300 hover:bg-[#7E89AC]"
+  >
+    Get started today
+  </button>
+</div>
+
 )
 }
