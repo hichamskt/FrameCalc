@@ -1,12 +1,21 @@
 
 import './App.css'
+import { Routes, Route } from "react-router-dom";
+import HomePage from './Pages/HomePage';
+import AboutPage from './Pages/AboutPage';
+import ContactPage from './Pages/ContactPage';
 
 function App() {
  
 
   return (
-   <p className='text-3xl font-bold underline text-red-500'>Hello</p>
+  <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage/>} />
+      <Route path="/contact" element={<ContactPage />} />
+    </Routes>
   )
 }
 
 export default App
+
