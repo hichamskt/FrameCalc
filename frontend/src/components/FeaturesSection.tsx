@@ -36,10 +36,12 @@ type props = {
 
 function FeatureBox(props: props) {
   return (
-    <div  data-aos="fade-right"
-  data-aos-delay="200"
-  data-aos-duration="1000"
-  className="flex  xl:text-6xl lg:text-5xl md:text-4xl sm:text-3xl font-normal uppercase  max-w-[80%] gap-10 justify-between mx-auto  mb-28 flex-col-reverse	 sm:flex-row">
+    <div
+      data-aos="fade-right"
+      data-aos-delay="200"
+      data-aos-duration="1000"
+      className="flex  xl:text-6xl lg:text-5xl md:text-4xl sm:text-3xl font-normal uppercase  max-w-[80%] gap-10 justify-between mx-auto  mb-28 flex-col-reverse	 sm:flex-row"
+    >
       <div className=" max-w-full sm:max-w-[50%]">
         <img src={props.image} alt="feature imag" className="w-full" />
       </div>
@@ -51,9 +53,12 @@ function FeatureBox(props: props) {
 }
 function ReveseFeatureBox(props: props) {
   return (
-    <div data-aos="fade-left"
-  data-aos-delay="200"
-  data-aos-duration="1000" className="flex  xl:text-6xl lg:text-5xl md:text-4xl sm:text-3xl font-normal uppercase  max-w-[80%] gap-10 mx-auto  justify-between mb-28 flex-col	 sm:flex-row">
+    <div
+      data-aos="fade-left"
+      data-aos-delay="200"
+      data-aos-duration="1000"
+      className="flex  xl:text-6xl lg:text-5xl md:text-4xl sm:text-3xl font-normal uppercase  max-w-[80%] gap-10 mx-auto  justify-between mb-28 flex-col	 sm:flex-row"
+    >
       <div className="sm:max-w-1/3 max-w-full ">
         <p>{props.text}</p>
       </div>
