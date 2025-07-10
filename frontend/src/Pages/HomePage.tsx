@@ -1,3 +1,4 @@
+import Contact from "../components/Contact"
 import Faqs from "../components/Faqs"
 import FeaturesSection from "../components/FeaturesSection"
 import FirstSection from "../components/FirstSection"
@@ -18,6 +19,7 @@ function HomePage() {
         <SecondSection />
         <Suppliers />
         <Faqs />
+        <Contact />
     </div>
   )
 }
