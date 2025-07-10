@@ -20,6 +20,8 @@ function FirstBox() {
         data-aos="fade-right"
         data-aos-delay="200"
         data-aos-duration="1000"
+        data-aos-easing="ease-in-sine"
+        data-aos-once="false"
         className="sm:row-span-2  row-span-1"
       >
         <p className="xl:text-6xl lg:text-5xl md:text-4xl sm:text-3xl font-thin">
@@ -31,6 +33,8 @@ function FirstBox() {
         data-aos="fade-left"
         data-aos-delay="200"
         data-aos-duration="1000"
+        data-aos-easing="ease-in-sine"
+        data-aos-once="false"
         className="sm:row-span-2 sm:col-start-2 sm:row-start-2 "
       >
         <img src={img1} alt="alum" />
@@ -45,6 +49,8 @@ function SecondBox() {
       <div
         data-aos="fade-rigth"
         data-aos-delay="200"
+        data-aos-once="false"
+        data-aos-easing="ease-in-sine"
         data-aos-duration="1000"
         className="max-w-[60%] xl:text-5xl lg:text-4xl md:text-3xl sm:text-2xl font-normal mb-20"
       >
@@ -58,6 +64,8 @@ function SecondBox() {
         <div
           data-aos="fade-right"
           data-aos-delay="200"
+          data-aos-once="false"
+          data-aos-easing="ease-in-sine"
           data-aos-duration="1000"
           className="row-span-2 col-start-1 row-start-2 lg:pr-24 pr-0 "
         >
@@ -66,6 +74,8 @@ function SecondBox() {
         </div>
         <div
           data-aos="fade-left"
+          data-aos-once="false"
+          data-aos-easing="ease-in-sine"
           data-aos-delay="200"
           data-aos-duration="1000"
           className="row-span-2 col-start-2 lg:pl-24 pl-0"
@@ -76,6 +86,8 @@ function SecondBox() {
         <div
           data-aos="fade-left"
           data-aos-delay="200"
+          data-aos-once="false"
+          data-aos-easing="ease-in-sine"
           data-aos-duration="1000"
           className="col-start-2 row-start-3 text-[16px] font-thin leading-relaxed pb-4 "
         >

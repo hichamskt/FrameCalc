@@ -1,3 +1,4 @@
+import Faqs from "../components/Faqs"
 import FeaturesSection from "../components/FeaturesSection"
 import FirstSection from "../components/FirstSection"
 import Header from "../components/Header"
@@ -16,7 +17,7 @@ function HomePage() {
         <FeaturesSection />
         <SecondSection />
         <Suppliers />
-
+        <Faqs />
     </div>
   )
 }

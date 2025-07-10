@@ -17,7 +17,9 @@ function Heading() {
   return (
     <div
       data-aos="fade-up"
+      data-aos-once="false"
       data-aos-delay="200"
+      data-aos-easing="ease-in-sine"
       data-aos-duration="1000"
       className="container text-white mt-[60px] pt-[50px] sm:mx-auto mx-[5px] text-center 
              text-2xl sm:text-3xl md:text-5xl font-normal 
