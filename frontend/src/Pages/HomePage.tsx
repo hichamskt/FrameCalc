@@ -3,6 +3,7 @@ import FirstSection from "../components/FirstSection"
 import Header from "../components/Header"
 import LandingPage from "../components/LandingPage"
 import SecondSection from "../components/SecondSection"
+import Suppliers from "../components/Suppliers"
 
 
 
@@ -14,6 +15,7 @@ function HomePage() {
         <FirstSection />
         <FeaturesSection />
         <SecondSection />
+        <Suppliers />
 
     </div>
   )
