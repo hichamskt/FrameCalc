@@ -82,6 +82,19 @@ const handleSubmit = () => {
 
   if (isValid) {
     nextStep();
+   updateDimensions();
+  }
+};
+
+
+const updateDimensions = async () => {
+  try {
+    await axios.patch(`/sketches/${sketchDetails.sketch_id}/`, {
+      width: sketchDetails.width,
+      height: sketchDetails.height,
+    });
+  } catch (error) {
+    console.error("Error updating dimensions:", error);
   }
 };
 
