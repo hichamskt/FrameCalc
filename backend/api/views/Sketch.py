@@ -7,6 +7,8 @@ from ..serializers.Sketch import SketchSerializer
 from ..utils.yolo_number_detector import detect_shapes_and_numbers_yolo
 from decimal import Decimal
 
+from rest_framework.pagination import PageNumberPagination
+from ..serializers.Sketch import SketchThumbnailSerializer
 
 class SketchListCreateView(generics.ListCreateAPIView):
     serializer_class = SketchSerializer
@@ -71,3 +73,19 @@ class UserSketchesView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return Sketch.objects.filter(user_id=user_id).select_related('user')
+
+
+
+
+
+class SketchThumbnailPagination(PageNumberPagination):
+    page_size = 10  # You can adjust as needed
+
+class PaginatedUserSketchesView(generics.ListAPIView):
+    serializer_class = SketchThumbnailSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = SketchThumbnailPagination
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        return Sketch.objects.filter(user_id=user_id).order_by('-created_at')

@@ -42,3 +42,11 @@ class SketchSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Height must be greater than zero")
         return value
 '''
+
+
+class SketchThumbnailSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True)  # returns full URL if used with request context
+
+    class Meta:
+        model = Sketch
+        fields = ['sketch_id', 'image']

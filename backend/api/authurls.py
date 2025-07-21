@@ -182,8 +182,9 @@ urlpatterns = [
     path('sketches/', Sketch.SketchListCreateView.as_view(), name='sketch-list'),
     path('sketches/<int:sketch_id>/', Sketch.SketchDetailView.as_view(), name='sketch-detail'),
     path('users/<uuid:user_id>/sketches/', Sketch.UserSketchesView.as_view(), name='user-sketches'),
-
-
+     path("sketches/user/<uuid:user_id>/thumbnails/", Sketch.PaginatedUserSketchesView.as_view(), name="user-sketch-thumbnails"),
+  
+  
     #quotation
 
 
