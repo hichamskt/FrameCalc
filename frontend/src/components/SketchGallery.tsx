@@ -20,6 +20,8 @@ const SketchGallery: React.FC<{ userId: string ;}> = ({ userId}) => {
   const [sketches, setSketches] = useState<Sketch[]>([]);
   const [nextPageUrl, setNextPageUrl] = useState<string | null>(`${API_BASE_URL}/sketches/user/${userId}/thumbnails/?page=1`);
   const [loading, setLoading] = useState<boolean>(false);
+
+
   
   const observerRef = useRef<HTMLDivElement | null>(null);
 const axios =useAxios();
@@ -38,6 +40,21 @@ const axios =useAxios();
       setLoading(false);
     }
   };
+  const DeletSketch = async (id:string) => {
+    
+    try {
+      await axios.delete(`sketches/${id}/`);
+       const filteredSketches = sketches.filter(sketch => sketch.sketch_id !== id);
+        setSketches(filteredSketches);
+
+
+     console.log('deleted successfully');
+    } catch (err) {
+      console.error("Error fetching sketches:", err);
+    }
+  };
+
+
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -67,10 +84,10 @@ const axios =useAxios();
 
 
   return (
-    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 relative">
       {sketches.map((sketch, index) => (
-        <div key={index} className="flex flex-col items-center relative">
-            <DropList />
+        <div key={index} className="flex flex-col items-center relative group">
+            <DropList id={sketch.sketch_id} onDelete={DeletSketch} />
           <LazyImage
             src={sketch.image}
             alt={`Sketch ${index}`}
@@ -91,18 +108,79 @@ export default SketchGallery;
 
 
 
-function DropList(){
-    const [dropList, setDropList] = useState<boolean>(false);
-    return(
-        <>
 
-        <div className="text-black absolute text-[16px] top-1 right-1 cursor-pointer z-10" onClick={()=>setDropList(!dropList)}>
-            <HiOutlineDotsHorizontal/>
+
+interface DropListProps {
+  onDelete: (id: string) => void;
+  id: string;
+}
+
+function DropList({ onDelete, id }: DropListProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setShowConfirm(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleDeleteConfirm = () => {
+    onDelete(id);
+    setShowConfirm(false);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative z-5 w-full  hidden group-hover:block" ref={menuRef}>
+      <div
+        className="text-black absolute text-[16px] top-1 right-1 cursor-pointer "
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <HiOutlineDotsHorizontal />
+      </div>
+
+      {isOpen && (
+        <ul className="flex flex-col bg-white border rounded shadow-md text-black text-sm absolute top-6 right-1">
+          <li className="p-2 cursor-pointer hover:bg-gray-100">Quotation</li>
+          <li
+            className="p-2 border-t cursor-pointer hover:bg-gray-100 text-red-600"
+            onClick={() => setShowConfirm(true)}
+          >
+            Delete
+          </li>
+        </ul>
+      )}
+
+      {/* Delete Confirmation Popup */}
+      {showConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#370f45b3] bg-opacity-30 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-72 z-50">
+            <p className="mb-4 text-center text-sm">Are you sure you want to delete this?</p>
+            <div className="flex justify-end gap-4">
+              <button
+                className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => setShowConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={handleDeleteConfirm}
+              >
+                Delete
+              </button>
             </div>
-{dropList && <ul className="flex flex-col text-black bg-white absolute  top-6 right-1 z-10 border-2 text-[12px]  ">
-                <li className="p-2 cursor-pointer hover:bg-gray-50 " >Quotation</li>
-                <li className="p-2 border-t cursor-pointer hover:bg-gray-50 ">Delet</li>
-            </ul>}
-        </>
-    )
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
