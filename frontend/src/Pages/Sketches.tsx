@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useAxios } from "../api/axios";
 import PdfViewer from "../components/PdfViewer";
 import type { SketchDetail } from "../types/app";
+import { IoMdArrowBack } from "react-icons/io";
 
 function Sketches() {
   const { user } = useAuth();
@@ -29,7 +30,7 @@ function Sketches() {
       setError("");
 
       try {
-        const response = await axios.get(`/quotations/${sketchId}/pdf/`, {
+        const response = await axios.get(`sketches/${sketchId}/quotation/pdf/`, {
           responseType: "blob",
         });
 
@@ -43,7 +44,7 @@ function Sketches() {
         console.log("PDF fetched successfully");
       } catch (error) {
         console.error("Error fetching PDF:", error);
-        setError("Failed to load PDF");
+        setError("Failed to load PDF ");
       } finally {
         setLoading(false);
       }
@@ -66,13 +67,20 @@ function Sketches() {
 
   return (
     <div className="w-full container">
+      <p className="text-white  p-4 text-3xl font-medium">Sketches History</p>
       {showPdf ? (
+        <>
+        <div className="text-white p-2 text-2xl rounded-[50%] cursor-pointer bg-[#37446B] w-fit ml-4 mb-4 hover:bg-[#7E89AC]" onClick={() => setShowPdf(false)}>
+        <IoMdArrowBack />
+
+        </div>
         <PdfViewer
           loading={loading}
           pdfUrl={pdfUrl}
           sketchDetails={sketchDetails}
           error={error}
-        />
+          />
+          </>
       ) : (
         user?.id && <SketchGallery userId={user.id} handlePdf={handlePdf}/>
       )}
