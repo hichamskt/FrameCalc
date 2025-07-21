@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useAxios } from "../api/axios";
 import LazyImage from "./LazyImage";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import toast from 'react-hot-toast';
+
 
 interface Sketch {
   sketch_id: string;
@@ -137,6 +139,9 @@ function DropList({ onDelete, id , handlePdf }: DropListProps) {
     onDelete(id);
     setShowConfirm(false);
     setIsOpen(false);
+    toast.success('Sketch deleted successfully!');
+    console.log('clicked ')
+
   };
 
   return (

@@ -12,6 +12,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Layout from "./Pages/Layout";
 import NewSketch from "./Pages/NewSketch";
 import Sketches from "./Pages/Sketches";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   useEffect(() => {
@@ -22,39 +23,43 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-
-      <Route path="/contact" element={<ContactPage />} />
-
-      <Route path="/dash" element={<Layout />}>
+    <>
+      <Toaster position="top-right" />
+      <Routes>
         <Route
-          path="/dash/newsketsh"
+          path="/"
           element={
             <ProtectedRoute>
-              <NewSketch />
+              <HomePage />
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/dash/sketches"
-          element={
-            <ProtectedRoute>
-              <Sketches />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
-    </Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        <Route path="/contact" element={<ContactPage />} />
+
+        <Route path="/dash" element={<Layout />}>
+          <Route
+            path="/dash/newsketsh"
+            element={
+              <ProtectedRoute>
+                <NewSketch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dash/sketches"
+            element={
+              <ProtectedRoute>
+                <Sketches />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+      </Routes>
+     
+    </>
   );
 }
 
