@@ -47,7 +47,7 @@ const navItems: NavItem[] = [
   {
     title: "Sketches",
     Icon: FaStar,
-    to: "/",
+    to: "/dash/sketches",
   },
   {
     title: "Quotations",

@@ -11,6 +11,7 @@ import Login from "./Pages/Login";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Layout from "./Pages/Layout";
 import NewSketch from "./Pages/NewSketch";
+import Sketches from "./Pages/Sketches";
 
 function App() {
   useEffect(() => {
@@ -36,14 +37,22 @@ function App() {
       <Route path="/contact" element={<ContactPage />} />
 
       <Route path="/dash" element={<Layout />}>
-
-      <Route path="/dash/newsketsh" element={
-        <ProtectedRoute>
-          <NewSketch />
-        </ProtectedRoute>
-         } />
-
-      
+        <Route
+          path="/dash/newsketsh"
+          element={
+            <ProtectedRoute>
+              <NewSketch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dash/sketches"
+          element={
+            <ProtectedRoute>
+              <Sketches />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );
