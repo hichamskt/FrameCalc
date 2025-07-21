@@ -13,7 +13,7 @@ interface PaginatedResponse {
   next: string | null;
 }
 
-const SketchGallery: React.FC<{ userId: string ;}> = ({ userId}) => {
+const SketchGallery: React.FC<{ userId: string , handlePdf: (id:string,showPdf:boolean)=>void}> = ({ userId , handlePdf}) => {
     
     const API_BASE_URL = import.meta.env.VITE_API_URL;
     
@@ -87,7 +87,7 @@ const axios =useAxios();
     <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 relative">
       {sketches.map((sketch, index) => (
         <div key={index} className="flex flex-col items-center relative group">
-            <DropList id={sketch.sketch_id} onDelete={DeletSketch} />
+            <DropList id={sketch.sketch_id} onDelete={DeletSketch} handlePdf={handlePdf} />
           <LazyImage
             src={sketch.image}
             alt={`Sketch ${index}`}
@@ -113,9 +113,10 @@ export default SketchGallery;
 interface DropListProps {
   onDelete: (id: string) => void;
   id: string;
+   handlePdf: (id:string,showPdf:boolean)=>void;
 }
 
-function DropList({ onDelete, id }: DropListProps) {
+function DropList({ onDelete, id , handlePdf }: DropListProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -149,7 +150,9 @@ function DropList({ onDelete, id }: DropListProps) {
 
       {isOpen && (
         <ul className="flex flex-col bg-white border rounded shadow-md text-black text-sm absolute top-6 right-1">
-          <li className="p-2 cursor-pointer hover:bg-gray-100">Quotation</li>
+          <li className="p-2 cursor-pointer hover:bg-gray-100"
+          onClick={()=>handlePdf(id,true)}
+          >Quotation</li>
           <li
             className="p-2 border-t cursor-pointer hover:bg-gray-100 text-red-600"
             onClick={() => setShowConfirm(true)}

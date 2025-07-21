@@ -79,7 +79,7 @@ class UserSketchesView(generics.ListAPIView):
 
 
 class SketchThumbnailPagination(PageNumberPagination):
-    page_size = 10  # You can adjust as needed
+    page_size = 10 
 
 class PaginatedUserSketchesView(generics.ListAPIView):
     serializer_class = SketchThumbnailSerializer
