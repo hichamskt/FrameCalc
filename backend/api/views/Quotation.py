@@ -16,6 +16,8 @@ import os
 from datetime import datetime
 import base64
 from io import BytesIO
+from rest_framework.views import APIView
+
 
 # PDF generation imports
 try:
@@ -674,3 +676,96 @@ class QuotationAluminumItemUpdateView(generics.UpdateAPIView):
 
     def get_queryset(self):
         return self.queryset.filter(quotation__sketch__user=self.request.user)
+    
+
+class GenerateQuotationPDFBySketchView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, sketch_id):
+        """
+        Generate and return a PDF for quotations associated with a specific sketch
+        """
+        try:
+            # Get the most recent quotation for this sketch
+            quotation = Quotation.objects.filter(
+                sketch__sketch_id=sketch_id,
+                sketch__user=request.user
+            ).select_related(
+                'sketch', 'subtype', 'profile'
+            ).prefetch_related(
+                'quotationmaterialitem_set__material',
+                'quotationaluminumitem_set__profile_material'
+            ).order_by('-created_at').first()
+            
+            if not quotation:
+                return Response(
+                    {'error': 'No quotation found for this sketch'}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Generate PDF
+            pdf_buffer = generate_quotation_pdf_reportlab(quotation)
+            
+            # Create filename
+            filename = f"quotation_sketch_{sketch_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            
+            # Return PDF as file response
+            response = FileResponse(
+                pdf_buffer,
+                as_attachment=True,
+                filename=filename,
+                content_type='application/pdf'
+            )
+            
+            return response
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Error generating PDF: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class GetQuotationPDFBase64BySketchView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, sketch_id):
+        """
+        Generate and return a PDF as base64 string for quotations associated with a sketch
+        """
+        try:
+            # Get the most recent quotation for this sketch
+            quotation = Quotation.objects.filter(
+                sketch__sketch_id=sketch_id,
+                sketch__user=request.user
+            ).select_related(
+                'sketch', 'subtype', 'profile'
+            ).prefetch_related(
+                'quotationmaterialitem_set__material',
+                'quotationaluminumitem_set__profile_material'
+            ).order_by('-created_at').first()
+            
+            if not quotation:
+                return Response(
+                    {'error': 'No quotation found for this sketch'}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Generate PDF
+            pdf_buffer = generate_quotation_pdf_reportlab(quotation)
+            
+            # Convert to base64
+            pdf_base64 = base64.b64encode(pdf_buffer.read()).decode('utf-8')
+            
+            return Response({
+                'sketch_id': sketch_id,
+                'quotation_id': quotation.quotation_id,
+                'pdf_base64': pdf_base64,
+                'filename': f"quotation_sketch_{sketch_id}.pdf"
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Error generating PDF: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

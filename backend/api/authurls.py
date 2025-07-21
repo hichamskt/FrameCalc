@@ -184,7 +184,13 @@ urlpatterns = [
     path('users/<uuid:user_id>/sketches/', Sketch.UserSketchesView.as_view(), name='user-sketches'),
      path("sketches/user/<uuid:user_id>/thumbnails/", Sketch.PaginatedUserSketchesView.as_view(), name="user-sketch-thumbnails"),
   
-  
+      path('sketches/<int:sketch_id>/quotation/pdf/', 
+         Quotation.GenerateQuotationPDFBySketchView.as_view(), 
+         name='generate_quotation_pdf_by_sketch'),
+    
+    path('sketches/<int:sketch_id>/quotation/pdf/base64/', 
+         Quotation.GetQuotationPDFBase64BySketchView.as_view(), 
+         name='get_quotation_pdf_base64_by_sketch'),
     #quotation
 
 
