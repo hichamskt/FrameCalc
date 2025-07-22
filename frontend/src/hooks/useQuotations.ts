@@ -1,20 +1,24 @@
 import { useState, useCallback } from 'react';
 import { useAxios } from '../api/axios';
 import filterQuotations from '../services/Quotation/filterQuotations';
-import type { QuotationFilters } from '../types/app';
+import type { Quotation, QuotationFilters } from '../types/app';
 
 export const useQuotations = () => {
-  const axios = useAxios(); // ✅ Now safe
+  const axios = useAxios(); 
   const [loading, setLoading] = useState(false);
-  const [quotations, setQuotations] = useState([]);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
+
   const [error, setError] = useState<string | null>(null);
 
   const filter = useCallback(async (filters: QuotationFilters) => {
     setLoading(true);
     try {
-      const result = await filterQuotations(axios, filters); // Pass axios here
+      const result = await filterQuotations(axios, filters); 
+
+      
       if (result.success) {
-        setQuotations(result.quotations);
+        setQuotations([...result.quotations]); // forces React to treat it as new
+
         setError(null);
         console.log('filterddata:',result.quotations)
       } else {

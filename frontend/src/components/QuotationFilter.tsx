@@ -8,22 +8,26 @@ import { FaMinusCircle } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
 import { RiResetLeftFill } from "react-icons/ri";
 
-
 type FilterProps = {
   showFillter: boolean;
 };
+type FilterFunction = (filters: QuotationFilters) => void;
 
 
-function QuotationFilter({ showFillter }: FilterProps) {
+interface QuotationFilterProps extends FilterProps{
+  filter: FilterFunction;
+}
 
 
- const [showAddFilters, setshowAddFilter] = useState<boolean>(false);
+
+function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
+  const [showAddFilters, setshowAddFilter] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [widthMin, setWidthMin] = useState<number>(0);
   const [widthMax, setWidthMax] = useState<number>(0);
   const [heightMax, setHeightMax] = useState<number>(0);
   const [heightMin, setHeightMin] = useState<number>(0);
-const [dateFiltter, setDateFiltter] = useState<string>("");
+  const [dateFiltter, setDateFiltter] = useState<string>("");
   const [priceFilter, setPriceFilter] = useState<{ min: number; max: number }>({
     min: 0,
     max: 0,
@@ -37,7 +41,7 @@ const [dateFiltter, setDateFiltter] = useState<string>("");
       Date: false,
     }
   );
-  
+
   const menuRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
@@ -51,38 +55,30 @@ const [dateFiltter, setDateFiltter] = useState<string>("");
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-
-
- 
-  const { quotations, loading, error, filter } = useQuotations(); 
-  const {subtypes} = useSubtypes();
+  
+  const { subtypes } = useSubtypes();
   const [filters, setFilters] = useState<QuotationFilters>({});
-const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
+  const [options, setOptions] = useState<{ label: string; value: string }[]>(
+    []
+  );
 
+  useEffect(() => {
+    const newOptions = subtypes.map((subtype: { name: string }) => ({
+      label: subtype.name,
+      value: subtype.name,
+    }));
 
-
-
-useEffect(() => {
-  const newOptions = subtypes.map((subtype: {  name: string }) => ({
-    label: subtype.name,
-    value: subtype.name,
-  }));
-
-  setOptions(newOptions); 
-}, [subtypes]);
-
-
+    setOptions(newOptions);
+  }, [subtypes]);
 
   useEffect(() => {
     const initialFilters: QuotationFilters = {
       page: 1,
       pageSize: 20,
-      ordering: '-date'
+      ordering: "-date",
     };
     filter(initialFilters);
-  }, []); 
-
+  }, []);
 
   useEffect(() => {
     if (Object.keys(filters).length > 0) {
@@ -90,91 +86,103 @@ useEffect(() => {
     }
   }, [filters, filter]);
 
+  const handleFilterChange = useCallback(
+    (newFilters: Partial<QuotationFilters>) => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        ...newFilters,
+        page: 1,
+      }));
+    },
+    []
+  );
 
-   const handleFilterChange = useCallback((newFilters: Partial<QuotationFilters>) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      ...newFilters,
-      page: 1 
-    }));
-  }, []);
+  useEffect(() => {
+    if (Object.keys(filters).length > 0) {
+      filter(filters);
+    }
+  }, [filters, filter]);
 
+  useEffect(() => {
+    const updates: Partial<QuotationFilters> = {};
 
- useEffect(() => {
-  const updates: Partial<QuotationFilters> = {};
+    if (priceFilter.min && priceFilter.min > 0) {
+      updates.priceMin = priceFilter.min;
+    }
 
-  if (priceFilter.min && priceFilter.min > 0) {
-    updates.priceMin = priceFilter.min;
-  }
+    if (priceFilter.max && priceFilter.max > 0) {
+      updates.priceMax = priceFilter.max;
+    }
+    if (widthMax && widthMax > 0) {
+      updates.widthMax = widthMax;
+    }
+    if (widthMin && widthMin > 0) {
+      updates.widthMin = widthMin;
+    }
+    if (heightMin && heightMin > 0) {
+      updates.heightMin = heightMin;
+    }
+    if (heightMax && heightMax > 0) {
+      updates.heightMax = heightMax;
+    }
+    if (dateFiltter) {
+      const { dateFrom, dateTo } = getDateRange(dateFiltter);
 
-  if (priceFilter.max && priceFilter.max > 0) {
-    updates.priceMax = priceFilter.max;
-  }
-  if (widthMax && widthMax > 0) {
-    updates.widthMax = widthMax;
-  }
-  if (widthMin && widthMin > 0) {
-    updates.widthMin = widthMin;
-  }
-  if (heightMin && heightMin > 0) {
-    updates.heightMin = heightMin;
-  }
-  if (heightMax && heightMax > 0) {
-    updates.heightMax = heightMax;
-  }
-  if (dateFiltter) {
-   const { dateFrom, dateTo } =   getDateRange(dateFiltter);
+      updates.dateFrom = dateFrom;
+      updates.dateTo = dateTo;
+    }
+    if (selectedOption) {
+      updates.subtype = selectedOption;
+    }
 
-    updates.dateFrom = dateFrom;
-    updates.dateTo=dateTo;
-  }
-  if (selectedOption) {
-  
-    updates.subtype =selectedOption ;
-  }
+    if (Object.keys(updates).length > 0) {
+      handleFilterChange(updates);
+    }
+  }, [
+    handleFilterChange,
+    priceFilter,
+    widthMax,
+    widthMin,
+    dateFiltter,
+    heightMin,
+    heightMax,
+    selectedOption,
+  ]);
 
+  const getDateRange = (
+    filterValue: string
+  ): { dateFrom: string; dateTo: string } => {
+    const now = new Date();
+    const endDate = new Date(now);
+    const startDate = new Date(now);
 
-  if (Object.keys(updates).length > 0) {
-    handleFilterChange(updates);
-  }
-}, [handleFilterChange, priceFilter , widthMax , widthMin , dateFiltter , heightMin , heightMax , selectedOption ]);
-  
+    switch (filterValue) {
+      case "1d":
+        startDate.setDate(now.getDate() - 1);
+        break;
+      case "1w":
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case "1m":
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case "6m":
+        startDate.setMonth(now.getMonth() - 6);
+        break;
+      case "1y":
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      default:
+        break;
+    }
 
- 
+    const toISOStringDate = (date: Date) => date.toISOString().split("T")[0];
 
-  const getDateRange = (filterValue: string): { dateFrom: string; dateTo: string } => {
-  const now = new Date();
-  const endDate = new Date(now);
-  const startDate = new Date(now); 
-
-  switch (filterValue) {
-    case "1d":
-      startDate.setDate(now.getDate() - 1);
-      break;
-    case "1w":
-      startDate.setDate(now.getDate() - 7);
-      break;
-    case "1m":
-      startDate.setMonth(now.getMonth() - 1);
-      break;
-    case "6m":
-      startDate.setMonth(now.getMonth() - 6);
-      break;
-    case "1y":
-      startDate.setFullYear(now.getFullYear() - 1);
-      break;
-    default:
-      break;
-  }
-
-  const toISOStringDate = (date: Date) => date.toISOString().split("T")[0];
-
-  return {
-    dateFrom: toISOStringDate(startDate),
-    dateTo: toISOStringDate(endDate),
+    return {
+      dateFrom: toISOStringDate(startDate),
+      dateTo: toISOStringDate(endDate),
+    };
   };
-};
-
 
   const filterOptions = [
     { label: "Last Day", value: "1d" },
@@ -191,18 +199,17 @@ useEffect(() => {
     }));
   };
 
-  const handleReste =  () =>{
+  const handleReste = () => {
     setFilters({});
-    filter({}); 
+    filter({});
     setWidthMax(0);
     setWidthMin(0);
-    setDateFiltter('');
+    setDateFiltter("");
     setHeightMin(0);
     setHeightMax(0);
-    setPriceFilter({min:0,max:0});
+    setPriceFilter({ min: 0, max: 0 });
     setSelectedOption("");
-
-  }
+  };
 
   return (
     <>
@@ -210,42 +217,40 @@ useEffect(() => {
         <div className="flex sm:items-center sm:gap-1 gap-6 mt-6 flex-wrap flex-col sm:flex-row ">
           {visibleFilters.Width && (
             <div className="flex items-center gap-2">
-
-            <NumberInput
-              value={widthMin}
-              onChange={(N) => setWidthMin(N)}
-              placeholder="Enter width"
-              min={0}
-              label="Min Width"
+              <NumberInput
+                value={widthMin}
+                onChange={(N) => setWidthMin(N)}
+                placeholder="Enter width"
+                min={0}
+                label="Min Width"
               />
-            <NumberInput
-              value={widthMax}
-              onChange={(N) => setWidthMax(N)}
-              placeholder="Enter width"
-              min={0}
-              label="Max Width"
+              <NumberInput
+                value={widthMax}
+                onChange={(N) => setWidthMax(N)}
+                placeholder="Enter width"
+                min={0}
+                label="Max Width"
               />
-              </div>
+            </div>
           )}
 
           {visibleFilters.Height && (
             <div className="flex items-center gap-2">
-
-            <NumberInput
-              value={heightMin}
-              onChange={(N) => setHeightMin(N)}
-              placeholder="Enter height"
-              min={0}
-              label="Min Height"
+              <NumberInput
+                value={heightMin}
+                onChange={(N) => setHeightMin(N)}
+                placeholder="Enter height"
+                min={0}
+                label="Min Height"
               />
-            <NumberInput
-              value={heightMax}
-              onChange={(N) => setHeightMax(N)}
-              placeholder="Enter height"
-              min={0}
-              label="Max Height"
+              <NumberInput
+                value={heightMax}
+                onChange={(N) => setHeightMax(N)}
+                placeholder="Enter height"
+                min={0}
+                label="Max Height"
               />
-              </div>
+            </div>
           )}
           {visibleFilters.Price && (
             <div className="flex items-center gap-1 ">
@@ -257,10 +262,6 @@ useEffect(() => {
                     min: Number(number),
                   }))
                 }
-
-                
-
-
                 placeholder="Enter min"
                 min={0}
                 label="min"
@@ -333,9 +334,11 @@ useEffect(() => {
               ))}
             </ul>
           </div>
-          <div className="text-white text-3xl cursor-pointer" onClick={() =>  handleReste() }>
-
-          <RiResetLeftFill/>
+          <div
+            className="text-white text-3xl cursor-pointer"
+            onClick={() => handleReste()}
+          >
+            <RiResetLeftFill />
           </div>
         </div>
       )}
@@ -343,7 +346,4 @@ useEffect(() => {
   );
 }
 
-export default QuotationFilter
-
-
-
+export default QuotationFilter;

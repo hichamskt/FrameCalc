@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export  type User = {
     email : string ;
     username: string ; 
@@ -108,6 +109,7 @@ export interface QuotationFilters {
 
 // Quotation interface (adjust based on your actual quotation structure)
 export interface Quotation {
+  quotation_id: any;
   id: number;
   subtype: string;
   price: number;

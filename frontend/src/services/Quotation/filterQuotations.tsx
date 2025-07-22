@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // filterQuotations.ts
 import type { FilterQuotationsResult, QuotationApiResponse, QuotationFilters } from "../../types/app";
 
@@ -22,7 +23,8 @@ export const filterQuotations = async (
     if (filters.pageSize !== undefined) params.append('page_size', filters.pageSize.toString());
     if (filters.ordering) params.append('ordering', filters.ordering);
 
-    const response = await axios.get<QuotationApiResponse>(`/quotations/filter/?${params.toString()}`);
+    const response = await axios.get(`/quotations/filter/?${params.toString()}`) as { data: QuotationApiResponse };
+
 
     return {
       success: true,
