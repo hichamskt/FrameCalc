@@ -207,6 +207,7 @@ urlpatterns = [
          Quotation.delete_sketches_without_quotations, 
          name='list_sketches_without_quotations'),
 
+path('quotations/filter/', Quotation.QuotationFilterView.as_view(), name='quotation-filter'),
     
     # Quotation calculation
     path('quotations/create/', Quotation.create_quotation_with_calculation, name='quotation-create-with-calculation'),

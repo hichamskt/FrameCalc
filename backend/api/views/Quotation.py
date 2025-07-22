@@ -18,6 +18,17 @@ import base64
 from io import BytesIO
 from rest_framework.views import APIView
 
+
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
+from rest_framework.pagination import PageNumberPagination
+from datetime import datetime, date
+from decimal import Decimal, InvalidOperation
+from django.core.exceptions import ValidationError
+
+
 from django.db import models
 # PDF generation imports
 try:
@@ -806,3 +817,180 @@ def delete_sketches_without_quotations(request):
             {'error': f'Error deleting sketches: {str(e)}'}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
+
+class QuotationPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class QuotationFilterView(generics.ListAPIView):
+    """
+    Filter quotations with multiple parameters and pagination
+    
+    Query Parameters:
+    - subtype: Filter by subtype ID or name
+    - price_min: Minimum price filter (decimal)
+    - price_max: Maximum price filter (decimal)
+    - width_min: Minimum width filter (decimal)
+    - width_max: Maximum width filter (decimal)
+    - height_min: Minimum height filter (decimal)
+    - height_max: Maximum height filter (decimal)
+    - date_from: Start date filter (YYYY-MM-DD format)
+    - date_to: End date filter (YYYY-MM-DD format)
+    - page: Page number (default: 1)
+    - page_size: Items per page (default: 20, max: 100)
+    - ordering: Order by field (options: created_at, -created_at, total_price, -total_price)
+    
+    Example URL: 
+    /api/quotations/filter/?subtype=1&price_min=100&price_max=1000&width_min=50&date_from=2024-01-01&page=1&page_size=10
+    """
+    serializer_class = QuotationListSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = QuotationPagination
+
+    def get_queryset(self):
+        queryset = Quotation.objects.filter(
+            sketch__user=self.request.user
+        ).select_related(
+            'sketch', 'subtype', 'profile'
+        ).prefetch_related(
+            'quotationmaterialitem_set__material',
+            'quotationaluminumitem_set__profile_material'
+        )
+
+        # Get query parameters
+        subtype = self.request.query_params.get('subtype', None)
+        price_min = self.request.query_params.get('price_min', None)
+        price_max = self.request.query_params.get('price_max', None)
+        width_min = self.request.query_params.get('width_min', None)
+        width_max = self.request.query_params.get('width_max', None)
+        height_min = self.request.query_params.get('height_min', None)
+        height_max = self.request.query_params.get('height_max', None)
+        date_from = self.request.query_params.get('date_from', None)
+        date_to = self.request.query_params.get('date_to', None)
+        ordering = self.request.query_params.get('ordering', '-created_at')
+
+        # Apply filters
+        filters = Q()
+
+        # Subtype filter (can be ID or name)
+        if subtype:
+            try:
+                # Try to convert to int first (ID)
+                subtype_id = int(subtype)
+                filters &= Q(subtype__subtype_id=subtype_id)
+            except ValueError:
+                # If not an int, treat as name
+                filters &= Q(subtype__name__icontains=subtype)
+
+        # Price filters
+        if price_min:
+            try:
+                price_min_decimal = Decimal(str(price_min))
+                filters &= Q(total_price__gte=price_min_decimal)
+            except (InvalidOperation, ValueError):
+                pass  # Ignore invalid price_min
+
+        if price_max:
+            try:
+                price_max_decimal = Decimal(str(price_max))
+                filters &= Q(total_price__lte=price_max_decimal)
+            except (InvalidOperation, ValueError):
+                pass  # Ignore invalid price_max
+
+        # Width filters (from sketch)
+        if width_min:
+            try:
+                width_min_decimal = Decimal(str(width_min))
+                filters &= Q(sketch__width__gte=width_min_decimal)
+            except (InvalidOperation, ValueError):
+                pass
+
+        if width_max:
+            try:
+                width_max_decimal = Decimal(str(width_max))
+                filters &= Q(sketch__width__lte=width_max_decimal)
+            except (InvalidOperation, ValueError):
+                pass
+
+        # Height filters (from sketch)
+        if height_min:
+            try:
+                height_min_decimal = Decimal(str(height_min))
+                filters &= Q(sketch__height__gte=height_min_decimal)
+            except (InvalidOperation, ValueError):
+                pass
+
+        if height_max:
+            try:
+                height_max_decimal = Decimal(str(height_max))
+                filters &= Q(sketch__height__lte=height_max_decimal)
+            except (InvalidOperation, ValueError):
+                pass
+
+        # Date filters
+        if date_from:
+            try:
+                from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+                filters &= Q(created_at__date__gte=from_date)
+            except ValueError:
+                pass  # Ignore invalid date format
+
+        if date_to:
+            try:
+                to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+                filters &= Q(created_at__date__lte=to_date)
+            except ValueError:
+                pass  # Ignore invalid date format
+
+        # Apply all filters
+        queryset = queryset.filter(filters)
+
+        # Apply ordering
+        valid_ordering_fields = [
+            'created_at', '-created_at',
+            'total_price', '-total_price',
+            'updated_at', '-updated_at',
+            'sketch__width', '-sketch__width',
+            'sketch__height', '-sketch__height'
+        ]
+        
+        if ordering in valid_ordering_fields:
+            queryset = queryset.order_by(ordering)
+        else:
+            queryset = queryset.order_by('-created_at')  # Default ordering
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        # Get filter parameters for response metadata
+        filters_applied = {}
+        for param in ['subtype', 'price_min', 'price_max', 'width_min', 'width_max', 
+                     'height_min', 'height_max', 'date_from', 'date_to', 'ordering']:
+            value = request.query_params.get(param)
+            if value:
+                filters_applied[param] = value
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            response_data = self.get_paginated_response(serializer.data)
+            
+            # Add metadata to response
+            response_data.data['filters_applied'] = filters_applied
+            response_data.data['total_results'] = queryset.count()
+            
+            return response_data
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'results': serializer.data,
+            'filters_applied': filters_applied,
+            'total_results': queryset.count()
+        })
+

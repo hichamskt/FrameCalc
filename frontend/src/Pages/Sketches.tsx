@@ -59,6 +59,22 @@ function Sketches() {
     };
   }, [sketchId]);
 
+  useEffect(() => {
+    const DeleteSketchesWithoutQiotation = async () => {
+      try {
+       await axios.delete(`/sketches/without-quotations/`);
+        console.log("Deleted  successfully");
+      } catch (error) {
+        console.error("Error deleting :", error);
+      
+      }
+    };
+
+    DeleteSketchesWithoutQiotation();
+
+    
+  }, []);
+
 
   const handlePdf = (id:string , showPdf:boolean):void=>{
     setSketchId(id);

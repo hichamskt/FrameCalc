@@ -88,3 +88,59 @@ export interface prevStep {
    
 
 }
+
+
+
+export interface QuotationFilters {
+  subtype?: string;
+  priceMin?: number;
+  priceMax?: number;
+  widthMin?: number;
+  widthMax?: number;
+  heightMin?: number;
+  heightMax?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+  pageSize?: number;
+  ordering?: string;
+}
+
+// Quotation interface (adjust based on your actual quotation structure)
+export interface Quotation {
+  id: number;
+  subtype: string;
+  price: number;
+  width: number;
+  height: number;
+  date: string;
+  // Add other quotation properties as needed
+}
+
+// Pagination interface
+export interface Pagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  totalResults: number;
+}
+
+// API Response interface
+export interface QuotationApiResponse {
+  results: Quotation[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+  total_results: number;
+  filters_applied: Record<string, any>;
+}
+
+// Function return type
+export interface FilterQuotationsResult {
+  success: boolean;
+  data?: QuotationApiResponse;
+  quotations: Quotation[];
+  pagination: Pagination | null;
+  filtersApplied?: Record<string, any>;
+  error?: string;
+}
