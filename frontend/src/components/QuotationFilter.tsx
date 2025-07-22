@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSubtypes } from "../hooks/useSubtypes";
-import { useQuotations } from "../hooks/useQuotations";
 import type { QuotationFilters } from "../types/app";
 import SimpleFilterSelect from "./ui/SimpleFilterSelect";
 import NumberInput from "./ui/NumberInput";
@@ -9,45 +8,53 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { RiResetLeftFill } from "react-icons/ri";
 
 type FilterProps = {
-  showFillter: boolean;
+  showFilter: boolean; // Fixed typo: showFillter -> showFilter
 };
+
 type FilterFunction = (filters: QuotationFilters) => void;
 
-
-interface QuotationFilterProps extends FilterProps{
+interface QuotationFilterProps extends FilterProps {
   filter: FilterFunction;
 }
 
+// Define filter types for better type safety
+type FilterKey = 'Subtype' | 'Price' | 'Width' | 'Height' | 'Date';
 
+interface PriceFilter {
+  min: number;
+  max: number;
+}
 
-function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
-  const [showAddFilters, setshowAddFilter] = useState<boolean>(false);
+function QuotationFilter({ showFilter, filter }: QuotationFilterProps) {
+  const [showAddFilters, setShowAddFilter] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [widthMin, setWidthMin] = useState<number>(0);
   const [widthMax, setWidthMax] = useState<number>(0);
   const [heightMax, setHeightMax] = useState<number>(0);
   const [heightMin, setHeightMin] = useState<number>(0);
-  const [dateFiltter, setDateFiltter] = useState<string>("");
-  const [priceFilter, setPriceFilter] = useState<{ min: number; max: number }>({
+  const [dateFilter, setDateFilter] = useState<string>(""); // Fixed typo: dateFiltter -> dateFilter
+  const [priceFilter, setPriceFilter] = useState<PriceFilter>({
     min: 0,
     max: 0,
   });
-  const [visibleFilters, setVisibleFilters] = useState<Record<string, boolean>>(
-    {
-      Subtype: false,
-      Price: false,
-      Width: false,
-      Height: false,
-      Date: false,
-    }
-  );
+  const [visibleFilters, setVisibleFilters] = useState<Record<FilterKey, boolean>>({
+    Subtype: false,
+    Price: false,
+    Width: false,
+    Height: false,
+    Date: false,
+  });
 
   const menuRef = useRef<HTMLUListElement | null>(null);
+  const { subtypes } = useSubtypes();
+  const [filters, setFilters] = useState<QuotationFilters>({});
+  const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
 
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setshowAddFilter(false);
+        setShowAddFilter(false);
       }
     };
 
@@ -55,22 +62,16 @@ function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  
-  const { subtypes } = useSubtypes();
-  const [filters, setFilters] = useState<QuotationFilters>({});
-  const [options, setOptions] = useState<{ label: string; value: string }[]>(
-    []
-  );
-
+  // Set up subtype options
   useEffect(() => {
     const newOptions = subtypes.map((subtype: { name: string }) => ({
       label: subtype.name,
       value: subtype.name,
     }));
-
     setOptions(newOptions);
   }, [subtypes]);
 
+  // Initialize filters on mount
   useEffect(() => {
     const initialFilters: QuotationFilters = {
       page: 1,
@@ -78,14 +79,16 @@ function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
       ordering: "-date",
     };
     filter(initialFilters);
-  }, []);
+  }, [filter]);
 
+  // Apply filters when they change
   useEffect(() => {
     if (Object.keys(filters).length > 0) {
       filter(filters);
     }
   }, [filters, filter]);
 
+  // Memoized filter change handler
   const handleFilterChange = useCallback(
     (newFilters: Partial<QuotationFilters>) => {
       setFilters((prevFilters) => ({
@@ -97,44 +100,45 @@ function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
     []
   );
 
-  useEffect(() => {
-    if (Object.keys(filters).length > 0) {
-      filter(filters);
-    }
-  }, [filters, filter]);
-
+  // Update filters when individual filter values change
   useEffect(() => {
     const updates: Partial<QuotationFilters> = {};
 
-    if (priceFilter.min && priceFilter.min > 0) {
+    // Price filters
+    if (priceFilter.min > 0) {
       updates.priceMin = priceFilter.min;
     }
-
-    if (priceFilter.max && priceFilter.max > 0) {
+    if (priceFilter.max > 0) {
       updates.priceMax = priceFilter.max;
     }
-    if (widthMax && widthMax > 0) {
+
+    // Dimension filters
+    if (widthMax > 0) {
       updates.widthMax = widthMax;
     }
-    if (widthMin && widthMin > 0) {
+    if (widthMin > 0) {
       updates.widthMin = widthMin;
     }
-    if (heightMin && heightMin > 0) {
+    if (heightMin > 0) {
       updates.heightMin = heightMin;
     }
-    if (heightMax && heightMax > 0) {
+    if (heightMax > 0) {
       updates.heightMax = heightMax;
     }
-    if (dateFiltter) {
-      const { dateFrom, dateTo } = getDateRange(dateFiltter);
 
+    // Date filter
+    if (dateFilter) {
+      const { dateFrom, dateTo } = getDateRange(dateFilter);
       updates.dateFrom = dateFrom;
       updates.dateTo = dateTo;
     }
+
+    // Subtype filter
     if (selectedOption) {
       updates.subtype = selectedOption;
     }
 
+    // Only update if there are actual changes
     if (Object.keys(updates).length > 0) {
       handleFilterChange(updates);
     }
@@ -143,15 +147,14 @@ function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
     priceFilter,
     widthMax,
     widthMin,
-    dateFiltter,
+    dateFilter, // Fixed typo
     heightMin,
     heightMax,
     selectedOption,
   ]);
 
-  const getDateRange = (
-    filterValue: string
-  ): { dateFrom: string; dateTo: string } => {
+  // Date range calculator
+  const getDateRange = (filterValue: string): { dateFrom: string; dateTo: string } => {
     const now = new Date();
     const endDate = new Date(now);
     const startDate = new Date(now);
@@ -184,6 +187,7 @@ function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
     };
   };
 
+  // Date filter options
   const filterOptions = [
     { label: "Last Day", value: "1d" },
     { label: "Last Week", value: "1w" },
@@ -192,157 +196,190 @@ function QuotationFilter({ showFillter , filter }: QuotationFilterProps ) {
     { label: "Last Year", value: "1y" },
   ];
 
-  const toggleFilter = (filter: string) => {
+  // Available filter types
+  const availableFilters: FilterKey[] = ["Subtype", "Price", "Width", "Height", "Date"];
+
+  // Toggle filter visibility
+  const toggleFilter = useCallback((filterKey: FilterKey) => {
     setVisibleFilters((prev) => ({
       ...prev,
-      [filter]: !prev[filter],
+      [filterKey]: !prev[filterKey],
     }));
-  };
+  }, []);
 
-  const handleReste = () => {
+  // Reset all filters
+  const handleReset = useCallback(() => {
+    // Reset all state
     setFilters({});
-    filter({});
     setWidthMax(0);
     setWidthMin(0);
-    setDateFiltter("");
+    setDateFilter("");
     setHeightMin(0);
     setHeightMax(0);
     setPriceFilter({ min: 0, max: 0 });
     setSelectedOption("");
-  };
+    
+    // Reset visible filters
+    setVisibleFilters({
+      Subtype: false,
+      Price: false,
+      Width: false,
+      Height: false,
+      Date: false,
+    });
+    
+    // Apply empty filters
+    filter({});
+  }, [filter]);
+
+  // Don't render if not shown
+  if (!showFilter) {
+    return null;
+  }
 
   return (
-    <>
-      {showFillter && (
-        <div className="flex sm:items-center sm:gap-1 gap-6 mt-6 flex-wrap flex-col sm:flex-row ">
-          {visibleFilters.Width && (
-            <div className="flex items-center gap-2">
-              <NumberInput
-                value={widthMin}
-                onChange={(N) => setWidthMin(N)}
-                placeholder="Enter width"
-                min={0}
-                label="Min Width"
-              />
-              <NumberInput
-                value={widthMax}
-                onChange={(N) => setWidthMax(N)}
-                placeholder="Enter width"
-                min={0}
-                label="Max Width"
-              />
-            </div>
-          )}
-
-          {visibleFilters.Height && (
-            <div className="flex items-center gap-2">
-              <NumberInput
-                value={heightMin}
-                onChange={(N) => setHeightMin(N)}
-                placeholder="Enter height"
-                min={0}
-                label="Min Height"
-              />
-              <NumberInput
-                value={heightMax}
-                onChange={(N) => setHeightMax(N)}
-                placeholder="Enter height"
-                min={0}
-                label="Max Height"
-              />
-            </div>
-          )}
-          {visibleFilters.Price && (
-            <div className="flex items-center gap-1 ">
-              <NumberInput
-                value={priceFilter.min}
-                onChange={(number) =>
-                  setPriceFilter((prev) => ({
-                    ...prev,
-                    min: Number(number),
-                  }))
-                }
-                placeholder="Enter min"
-                min={0}
-                label="min"
-              />
-              <NumberInput
-                value={priceFilter.max}
-                onChange={(number) =>
-                  setPriceFilter((prev) => ({
-                    ...prev,
-                    max: Number(number),
-                  }))
-                }
-                placeholder="Enter max"
-                min={priceFilter.min}
-                label="max"
-              />
-            </div>
-          )}
-          {visibleFilters.Subtype && (
-            <SimpleFilterSelect
-              options={options}
-              value={selectedOption}
-              onChange={setSelectedOption}
-              placeholder="Subtype Fillter"
-            />
-          )}
-          {visibleFilters.Date && (
-            <SimpleFilterSelect
-              options={filterOptions}
-              value={dateFiltter}
-              onChange={setDateFiltter}
-              placeholder="Date Fillter"
-            />
-          )}
-          <div className="relative w-fit">
-            <button
-              onClick={() => setshowAddFilter(!showAddFilters)}
-              className="bg-[#CB3CFF] text-white cursor-pointer px-3 py-2 rounded hover:bg-[#cb3cffe5] transition-colors"
-            >
-              Add Filter
-            </button>
-
-            {/* Dropdown */}
-            <ul
-              ref={menuRef}
-              className={`text-white text-[16px] flex flex-col gap-1 absolute top-[50px] right-[-100px] bg-[#343B4F] w-[200px] rounded transition-all duration-300 ease-in-out transform ${
-                showAddFilters
-                  ? "opacity-100 scale-100 visible"
-                  : "opacity-0 scale-95 invisible"
-              }`}
-            >
-              <p className="p-2">Filters</p>
-              {["Subtype", "Price", "Width", "Height", "Date"].map((label) => (
-                <li
-                  key={label}
-                  className="flex p-3 items-center justify-between hover:bg-[#444b61] transition-colors"
-                >
-                  {label}
-                  <span
-                    className="hover:text-[#cb3cffe5] cursor-pointer transition-colors"
-                    onClick={() => toggleFilter(label)}
-                  >
-                    {visibleFilters[label] ? (
-                      <FaMinusCircle />
-                    ) : (
-                      <FaCirclePlus />
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div
-            className="text-white text-3xl cursor-pointer"
-            onClick={() => handleReste()}
-          >
-            <RiResetLeftFill />
-          </div>
+    <div className="flex sm:items-center sm:gap-1 gap-6 mt-6 flex-wrap flex-col sm:flex-row">
+      {/* Width Filter */}
+      {visibleFilters.Width && (
+        <div className="flex items-center gap-2">
+          <NumberInput
+            value={widthMin}
+            onChange={setWidthMin}
+            placeholder="Enter width"
+            min={0}
+            label="Min Width"
+          />
+          <NumberInput
+            value={widthMax}
+            onChange={setWidthMax}
+            placeholder="Enter width"
+            min={widthMin} // Ensure max is at least min
+            label="Max Width"
+          />
         </div>
       )}
-    </>
+
+      {/* Height Filter */}
+      {visibleFilters.Height && (
+        <div className="flex items-center gap-2">
+          <NumberInput
+            value={heightMin}
+            onChange={setHeightMin}
+            placeholder="Enter height"
+            min={0}
+            label="Min Height"
+          />
+          <NumberInput
+            value={heightMax}
+            onChange={setHeightMax}
+            placeholder="Enter height"
+            min={heightMin} // Ensure max is at least min
+            label="Max Height"
+          />
+        </div>
+      )}
+
+      {/* Price Filter */}
+      {visibleFilters.Price && (
+        <div className="flex items-center gap-1">
+          <NumberInput
+            value={priceFilter.min}
+            onChange={(number) =>
+              setPriceFilter((prev) => ({
+                ...prev,
+                min: Number(number),
+              }))
+            }
+            placeholder="Enter min"
+            min={0}
+            label="Min Price"
+          />
+          <NumberInput
+            value={priceFilter.max}
+            onChange={(number) =>
+              setPriceFilter((prev) => ({
+                ...prev,
+                max: Number(number),
+              }))
+            }
+            placeholder="Enter max"
+            min={priceFilter.min}
+            label="Max Price"
+          />
+        </div>
+      )}
+
+      {/* Subtype Filter */}
+      {visibleFilters.Subtype && (
+        <SimpleFilterSelect
+          options={options}
+          value={selectedOption}
+          onChange={setSelectedOption}
+          placeholder="Subtype Filter" // Fixed typo: Fillter -> Filter
+        />
+      )}
+
+      {/* Date Filter */}
+      {visibleFilters.Date && (
+        <SimpleFilterSelect
+          options={filterOptions}
+          value={dateFilter}
+          onChange={setDateFilter}
+          placeholder="Date Filter" // Fixed typo: Fillter -> Filter
+        />
+      )}
+
+      {/* Add Filter Dropdown */}
+      <div className="relative w-fit">
+        <button
+          onClick={() => setShowAddFilter(!showAddFilters)}
+          className="bg-[#CB3CFF] text-white cursor-pointer px-3 py-2 rounded hover:bg-[#cb3cffe5] transition-colors"
+          aria-label="Add Filter"
+          aria-expanded={showAddFilters}
+        >
+          Add Filter
+        </button>
+
+        {/* Dropdown Menu */}
+        <ul
+          ref={menuRef}
+          className={`text-white text-[16px] flex flex-col gap-1 absolute top-[50px] right-[-100px] bg-[#343B4F] w-[200px] rounded transition-all duration-300 ease-in-out transform z-10 ${
+            showAddFilters
+              ? "opacity-100 scale-100 visible"
+              : "opacity-0 scale-95 invisible"
+          }`}
+          role="menu"
+        >
+          <p className="p-2 font-medium border-b border-gray-600">Filters</p>
+          {availableFilters.map((label) => (
+            <li
+              key={label}
+              className="flex p-3 items-center justify-between hover:bg-[#444b61] transition-colors"
+              role="menuitem"
+            >
+              <span>{label}</span>
+              <button
+                className="hover:text-[#cb3cffe5] cursor-pointer transition-colors"
+                onClick={() => toggleFilter(label)}
+                aria-label={`${visibleFilters[label] ? 'Remove' : 'Add'} ${label} filter`}
+              >
+                {visibleFilters[label] ? <FaMinusCircle /> : <FaCirclePlus />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Reset Button */}
+      <button
+        className="text-white text-3xl cursor-pointer hover:text-gray-300 transition-colors"
+        onClick={handleReset}
+        aria-label="Reset all filters"
+        title="Reset all filters"
+      >
+        <RiResetLeftFill />
+      </button>
+    </div>
   );
 }
 

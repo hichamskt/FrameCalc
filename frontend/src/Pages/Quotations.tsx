@@ -1,12 +1,11 @@
+// pages/Quotations.tsx
 import { IoFilter } from "react-icons/io5";
-
 import { useEffect, useState } from "react";
-
 import QuotationFilter from "../components/QuotationFilter";
 import { useQuotations } from "../hooks/useQuotations";
 import CustomTable from "../components/ui/CustomTable";
+import Pagination from "../components/ui/Pagination";
 import { Quotation } from "../types/app";
-
 
 interface TableColumn {
   key: string;
@@ -14,81 +13,139 @@ interface TableColumn {
   render?: (value: any, row: TableData) => React.ReactNode;
 }
 
+interface TableData {
+  id: number;
+  width: number;
+  height: number;
+  date: string;
+  subtype_name: string;
+  total_price: number;
+}
+
 function Quotations() {
-  const [showFillter, setShowFillters ] = useState<boolean>(true);
-const [data,setData]= useState<Quotation[]>([]);
+  const [showFilter, setShowFilter] = useState<boolean>(true); // Fixed typo
+  
+  const { 
+    quotations, 
+    loading, 
+    pagination, 
+    currentFilters, 
+    filter, 
+    changePage, 
+    changePageSize 
+  } = useQuotations();
 
-useEffect(() => {
-  filter({}); // pass empty or default filters
-}, []);
-  const {quotations , loading , filter} = useQuotations();
+  // Initialize with default filters
+  useEffect(() => {
+    filter({
+      page: 1,
+      pageSize: 20,
+      ordering: "-date"
+    });
+  }, [filter]);
 
-   const columns: TableColumn[] = [
+  const columns: TableColumn[] = [
     { key: 'id', header: 'Id' },
     { key: 'width', header: 'Width' },
     { key: 'height', header: 'Height' },
-    { key: 'total_price', header: 'total_price' },
-    {key:"subtype_name", header:"type"},
-    {key:"date", header:"date"}
-  
-  ]
- 
+    { key: 'total_price', header: 'Total Price' }, // Fixed casing
+    { key: "subtype_name", header: "Type" },
+    { key: "date", header: "Date" }
+  ];
 
+  const transformedData: TableData[] = quotations?.map((q) => {
+    const [width, height] = q.sketch_dimensions
+      .split('x')
+      .map((dim) => parseFloat(dim.trim()));
 
+    const formattedDate = new Date(q.created_at).toLocaleDateString('fr-FR');
 
-const transformedData = quotations?.map((q) => {
-  const [width, height] = q.sketch_dimensions
-    .split('x')
-    .map((dim) => parseFloat(dim.trim()));
+    return {
+      id: q.quotation_id,
+      width,
+      height,
+      date: formattedDate,
+      subtype_name: q.subtype_name,
+      total_price: q.total_price,
+    };
+  }) || [];
 
-  const formattedDate = new Date(q.created_at).toLocaleDateString('fr-FR');
+  console.log('Quotations data:', quotations);
+  console.log('Pagination info:', pagination);
 
-  return {
-    id: q.quotation_id,
-    width,
-    height,
-    date: formattedDate,
-    subtype_name: q.subtype_name,
-    total_price: q.total_price,
-  };
-});
-
-
-
-
-
-
-  // console.log('qot',transformedData)
-  console.log('qot2',quotations)
   const handleSelectionChange = (selectedIds: (string | number)[]) => {
     console.log('Selected IDs:', selectedIds);
   };
 
+  const handlePageChange = (page: number) => {
+    changePage(page);
+  };
 
+  const handlePageSizeChange = (pageSize: number) => {
+    changePageSize(pageSize);
+  };
 
-
-
-
- 
+  // Calculate pagination values
+  const currentPage = currentFilters.page || 1;
+  const pageSize = currentFilters.pageSize || 20;
+  const totalResults = pagination?.totalResults || 0;
+  const totalPages = Math.ceil(totalResults / pageSize);
 
   return (
-    <div className="p-4 w-full">
-      <p className="text-white text-3xl font-medium">My Quotation</p>
+    <div className="p-4 w-full flex flex-col gap-4">
+      <p className="text-white text-3xl font-medium">My Quotations</p>
+      
       <div className="text-white flex items-center justify-between w-full text-2xl">
-        <p>fillter</p>
-        <span onClick={() => setShowFillters(!showFillter)}>
-          {" "}
+        <p>Filter</p> {/* Fixed typo */}
+        <button 
+          onClick={() => setShowFilter(!showFilter)}
+          className="hover:text-[#CB3CFF] transition-colors"
+          aria-label="Toggle filters"
+        >
           <IoFilter />
-        </span>
+        </button>
       </div>
-      <QuotationFilter showFillter={showFillter} filter={filter} />
-     { loading ? "loading" :  <CustomTable data={transformedData} columns={columns} onSelectionChange={handleSelectionChange}
-         selectable={true}  />} 
+      
+      <QuotationFilter showFilter={showFilter} filter={filter} />
+      
+      {loading ? (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-white text-lg">Loading...</div>
+        </div>
+      ) : (
+        <>
+          <CustomTable 
+            data={transformedData} 
+            columns={columns} 
+            onSelectionChange={handleSelectionChange}
+            selectable={true}
+          />
+          
+          {/* Pagination Component */}
+          {pagination && totalResults > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalResults={totalResults}
+              pageSize={pageSize}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              loading={loading}
+              showPageSizeSelector={true}
+              pageSizeOptions={[10, 20, 50, 100]}
+            />
+          )}
+          
+          {/* Empty state */}
+          {!loading && totalResults === 0 && (
+            <div className="flex items-center justify-center p-8">
+              <div className="text-gray-400 text-lg">No quotations found</div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
 
 export default Quotations;
-
-
-
