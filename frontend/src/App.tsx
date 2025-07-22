@@ -13,6 +13,7 @@ import Layout from "./Pages/Layout";
 import NewSketch from "./Pages/NewSketch";
 import Sketches from "./Pages/Sketches";
 import { Toaster } from "react-hot-toast";
+import Quotations from "./Pages/Quotations";
 
 function App() {
   useEffect(() => {
@@ -53,6 +54,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Sketches />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dash/quotations"
+            element={
+              <ProtectedRoute>
+                <Quotations />
               </ProtectedRoute>
             }
           />

@@ -18,7 +18,7 @@ import base64
 from io import BytesIO
 from rest_framework.views import APIView
 
-
+from django.db import models
 # PDF generation imports
 try:
     from reportlab.lib.pagesizes import letter, A4
@@ -769,3 +769,40 @@ class GetQuotationPDFBase64BySketchView(APIView):
                 {'error': f'Error generating PDF: {str(e)}'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_sketches_without_quotations(request):
+    """
+    Delete all sketches that don't have any quotations for the current user
+    """
+    try:
+        # Find sketches without quotations for the current user
+        sketches_without_quotations = Sketch.objects.filter(
+            user=request.user
+        ).annotate(
+            quotation_count=models.Count('quotation')
+        ).filter(quotation_count=0)
+        
+        # Get count and details before deletion
+        count = sketches_without_quotations.count()
+        sketch_details = list(sketches_without_quotations.values(
+            'sketch_id', 'shape', 'width', 'height', 'created_at'
+        ))
+        
+        # Delete the sketches
+        deleted_count, _ = sketches_without_quotations.delete()
+        
+        return Response({
+            'message': f'Successfully deleted {deleted_count} sketches without quotations',
+            'deleted_sketches': sketch_details,
+            'count': count
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Error deleting sketches: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

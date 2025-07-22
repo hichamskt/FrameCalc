@@ -203,7 +203,9 @@ urlpatterns = [
     # Item update URLs
     path('quotations/material-items/<int:item_id>/', Quotation.QuotationMaterialItemUpdateView.as_view(), name='quotation-material-item-update'),
     path('quotations/aluminum-items/<int:item_id>/', Quotation.QuotationAluminumItemUpdateView.as_view(), name='quotation-aluminum-item-update'),
-    
+     path('sketches/without-quotations/', 
+         Quotation.delete_sketches_without_quotations, 
+         name='list_sketches_without_quotations'),
 
     
     # Quotation calculation

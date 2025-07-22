@@ -52,7 +52,7 @@ const navItems: NavItem[] = [
   {
     title: "Quotations",
     Icon: LuTextQuote,
-    to: "/",
+    to: "/dash/quotations",
   },
   {
     title: "Alucobond Cutting",
