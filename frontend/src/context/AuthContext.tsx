@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode";
 
 import axios from "../api/axios";
 
+
 interface DecodedToken {
   exp: number;
   user_id?: string;
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(null);
     }
   };
-  console.log(user)
+  
 
   const refreshAccessToken = async (): Promise<boolean> => {
     try {

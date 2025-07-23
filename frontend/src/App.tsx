@@ -31,9 +31,9 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            
               <HomePage />
-            </ProtectedRoute>
+            
           }
         />
         <Route path="/login" element={<Login />} />
@@ -41,37 +41,41 @@ function App() {
 
         <Route path="/contact" element={<ContactPage />} />
 
-        <Route path="/dash" element={<Layout />}>
+        <Route path="/dash" element={
+          <ProtectedRoute>
+          <Layout />
+          </ProtectedRoute>
+          }>
           <Route
             path="/dash/newsketsh"
             element={
-              <ProtectedRoute>
+              
                 <NewSketch />
-              </ProtectedRoute>
+             
             }
           />
           <Route
             path="/dash/sketches"
             element={
-              <ProtectedRoute>
+             
                 <Sketches />
-              </ProtectedRoute>
+             
             }
           />
           <Route
             path="/dash/quotations"
             element={
-              <ProtectedRoute>
+             
                 <Quotations />
-              </ProtectedRoute>
+             
             }
           />
           <Route
             path="/dash/alcubond"
             element={
-              <ProtectedRoute>
+             
                 <AlucobondCutting  />
-              </ProtectedRoute>
+             
             }
           />
         </Route>

@@ -2,7 +2,7 @@ import logo from "../assets/logo 1.png"
 import LoginInput from "./ui/LoginInput"
 import { useState } from "react";
 import LoginButton from "./ui/LoginButton";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Loading from "./ui/Loading";
@@ -25,8 +25,12 @@ type user={
 
 function Form( ){
     
+ const { login } = useAuth();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/dash/newsketsh";
+
+
 
 const [values, setValues] = useState<user>({
     email: "",
@@ -78,7 +82,8 @@ setLoading(true);
 try {
   const{email,password}=values;
   await login({ email , password });
-  navigate("/contact"); 
+   navigate(from, { replace: true });
+  
 } catch (error) {
   setErrorMsg("Invalid credentials or server error");
   console.log("error:",error)

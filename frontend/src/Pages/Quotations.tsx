@@ -7,6 +7,7 @@ import CustomTable from "../components/ui/CustomTable";
 import Pagination from "../components/ui/Pagination";
 
 import { useAxios } from "../api/axios";
+import toast from "react-hot-toast";
 
 interface TableColumn {
   key: string;
@@ -43,7 +44,7 @@ function Quotations() {
   useEffect(() => {
     filter({
       page: 1,
-      pageSize: 20,
+      pageSize: 10,
       ordering: "-date"
     });
   }, [filter]);
@@ -79,8 +80,7 @@ function Quotations() {
 }, [quotations]);
 
 
-  console.log('Quotations data:', quotations);
-  console.log('Pagination info:', pagination);
+  
 
   const handleSelectionChange = (selectedIds: (string | number)[]) => {
     console.log('Selected IDs:', selectedIds);
@@ -96,7 +96,7 @@ function Quotations() {
 
   // Calculate pagination values
   const currentPage = currentFilters.page || 1;
-  const pageSize = currentFilters.pageSize || 20;
+  const pageSize = currentFilters.pageSize || 10;
   const totalResults = pagination?.totalResults || 0;
   const totalPages = Math.ceil(totalResults / pageSize);
 
@@ -110,7 +110,7 @@ function Quotations() {
       data: { quotation_ids: quotationIds },
     });
 
-    console.log("Deleted successfully");
+    toast.success("quotation deleted successfully!");
 
     const updatedData = transformedData.filter(
       (item) => !quotationIds.includes(item.id)
