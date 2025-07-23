@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MdDelete } from "react-icons/md";
 
 
 interface TableData {
@@ -11,21 +12,26 @@ interface TableColumn {
   key: string;
   header: string;
   render?: (value: any, row: TableData) => React.ReactNode;
+
 }
 
 // Define the props for the CustomTable component
+
 interface CustomTableProps {
   data: TableData[];
   columns: TableColumn[];
   onSelectionChange?: (selectedIds: (string | number)[]) => void;
   selectable?: boolean;
+  deleteFunction : (quotationIds: (number | string )[]) => Promise<any>;
+
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({
   data,
   columns,
   onSelectionChange,
-  selectable = true
+  selectable = true,
+  deleteFunction,
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
 
@@ -116,10 +122,14 @@ const CustomTable: React.FC<CustomTableProps> = ({
         </tbody>
       </table>
       {selectedRows.size > 0 && (
-        <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+        <div className="mt-4 p-3 bg-blue-100 rounded-lg flex items-center justify-between">
           <p className="text-sm text-blue-800">
             {selectedRows.size} row{selectedRows.size !== 1 ? 's' : ''} selected
           </p>
+
+          <div className='text-3xl text-red-400 cursor-pointer hover:text-red-600 transition-colors' onClick={()=>deleteFunction([...selectedRows])}>
+          <MdDelete />
+          </div>
         </div>
       )}
     </div>

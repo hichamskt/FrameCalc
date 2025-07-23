@@ -5,7 +5,8 @@ import QuotationFilter from "../components/QuotationFilter";
 import { useQuotations } from "../hooks/useQuotations";
 import CustomTable from "../components/ui/CustomTable";
 import Pagination from "../components/ui/Pagination";
-import { Quotation } from "../types/app";
+
+import { useAxios } from "../api/axios";
 
 interface TableColumn {
   key: string;
@@ -24,7 +25,10 @@ interface TableData {
 
 function Quotations() {
   const [showFilter, setShowFilter] = useState<boolean>(true); // Fixed typo
-  
+  const axios = useAxios();
+  const [transformedData, setTransformedData] = useState<TableData[]>([]);
+
+
   const { 
     quotations, 
     loading, 
@@ -53,7 +57,8 @@ function Quotations() {
     { key: "date", header: "Date" }
   ];
 
-  const transformedData: TableData[] = quotations?.map((q) => {
+  useEffect(() => {
+  const data = quotations?.map((q) => {
     const [width, height] = q.sketch_dimensions
       .split('x')
       .map((dim) => parseFloat(dim.trim()));
@@ -69,6 +74,10 @@ function Quotations() {
       total_price: q.total_price,
     };
   }) || [];
+
+  setTransformedData(data);
+}, [quotations]);
+
 
   console.log('Quotations data:', quotations);
   console.log('Pagination info:', pagination);
@@ -90,6 +99,31 @@ function Quotations() {
   const pageSize = currentFilters.pageSize || 20;
   const totalResults = pagination?.totalResults || 0;
   const totalPages = Math.ceil(totalResults / pageSize);
+
+   
+ 
+  const DeleteSketchesWithoutQuotation = async (
+  quotationIds: (string | number)[]
+) => {
+  try {
+    await axios.delete(`/quotations/bulk-delete/`, {
+      data: { quotation_ids: quotationIds },
+    });
+
+    console.log("Deleted successfully");
+
+    const updatedData = transformedData.filter(
+      (item) => !quotationIds.includes(item.id)
+    );
+
+    setTransformedData(updatedData); 
+  } catch (error) {
+    console.error("Error deleting:", error);
+  }
+};
+
+
+      
 
   return (
     <div className="p-4 w-full flex flex-col gap-4">
@@ -119,6 +153,7 @@ function Quotations() {
             columns={columns} 
             onSelectionChange={handleSelectionChange}
             selectable={true}
+            deleteFunction={DeleteSketchesWithoutQuotation}
           />
           
           {/* Pagination Component */}

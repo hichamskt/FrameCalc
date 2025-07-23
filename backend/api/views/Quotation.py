@@ -994,3 +994,180 @@ class QuotationFilterView(generics.ListAPIView):
             'total_results': queryset.count()
         })
 
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def bulk_delete_quotations(request):
+    """
+    Delete multiple quotations by their IDs
+    
+    Expected payload:
+    {
+        "quotation_ids": [1, 2, 3, 4, 5]
+    }
+    
+    Returns:
+    - Success: List of deleted quotations with their details
+    - Error: List of IDs that couldn't be deleted and reasons
+    """
+    try:
+        quotation_ids = request.data.get('quotation_ids', [])
+        
+        # Validate that quotation_ids is provided and is a list
+        if not quotation_ids:
+            return Response(
+                {'error': 'quotation_ids array is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not isinstance(quotation_ids, list):
+            return Response(
+                {'error': 'quotation_ids must be an array'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate that all IDs are integers
+        try:
+            quotation_ids = [int(id) for id in quotation_ids]
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'All quotation_ids must be valid integers'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Find quotations that belong to the current user
+        quotations_to_delete = Quotation.objects.filter(
+            quotation_id__in=quotation_ids,
+            sketch__user=request.user
+        ).select_related('sketch', 'subtype', 'profile')
+        
+        # Get details of quotations before deletion
+        deleted_quotations = []
+        found_ids = []
+        
+        for quotation in quotations_to_delete:
+            deleted_quotations.append({
+                'quotation_id': quotation.quotation_id,
+                'sketch_id': quotation.sketch.sketch_id if quotation.sketch else None,
+                'sketch_dimensions': f"{quotation.sketch.width} x {quotation.sketch.height}" if quotation.sketch else None,
+                'subtype': quotation.subtype.name if quotation.subtype else None,
+                'profile': quotation.profile.name if quotation.profile else None,
+                'total_price': float(quotation.total_price),
+                'created_at': quotation.created_at
+            })
+            found_ids.append(quotation.quotation_id)
+        
+        # Identify quotations that were not found or don't belong to user
+        not_found_ids = [id for id in quotation_ids if id not in found_ids]
+        
+        # Delete the quotations
+        deleted_count, deletion_details = quotations_to_delete.delete()
+        
+        # Prepare response
+        response_data = {
+            'message': f'Successfully deleted {len(deleted_quotations)} quotations',
+            'deleted_count': len(deleted_quotations),
+            'deleted_quotations': deleted_quotations,
+            'requested_count': len(quotation_ids)
+        }
+        
+        # Add information about not found quotations if any
+        if not_found_ids:
+            response_data['not_found_ids'] = not_found_ids
+            response_data['not_found_count'] = len(not_found_ids)
+            response_data['message'] += f'. {len(not_found_ids)} quotations were not found or do not belong to you.'
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Error deleting quotations: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+# Alternative class-based view implementation
+class BulkDeleteQuotationsView(APIView):
+    """
+    Delete multiple quotations by their IDs (Class-based view alternative)
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request):
+        """
+        Delete multiple quotations by their IDs
+        
+        Expected payload:
+        {
+            "quotation_ids": [1, 2, 3, 4, 5]
+        }
+        """
+        try:
+            quotation_ids = request.data.get('quotation_ids', [])
+            
+            # Validate input
+            if not quotation_ids:
+                return Response(
+                    {'error': 'quotation_ids array is required'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if not isinstance(quotation_ids, list):
+                return Response(
+                    {'error': 'quotation_ids must be an array'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Convert to integers and validate
+            try:
+                quotation_ids = [int(id) for id in quotation_ids]
+            except (ValueError, TypeError):
+                return Response(
+                    {'error': 'All quotation_ids must be valid integers'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Remove duplicates while preserving order
+            quotation_ids = list(dict.fromkeys(quotation_ids))
+            
+            # Find and delete quotations
+            quotations_query = Quotation.objects.filter(
+                quotation_id__in=quotation_ids,
+                sketch__user=request.user
+            ).select_related('sketch', 'subtype', 'profile')
+            
+            # Collect information before deletion
+            deletion_info = []
+            found_ids = []
+            
+            for quotation in quotations_query:
+                deletion_info.append({
+                    'quotation_id': quotation.quotation_id,
+                    'sketch_id': quotation.sketch.sketch_id if quotation.sketch else None,
+                    'total_price': float(quotation.total_price),
+                    'subtype': quotation.subtype.name if quotation.subtype else None,
+                    'created_at': quotation.created_at.isoformat()
+                })
+                found_ids.append(quotation.quotation_id)
+            
+            # Perform deletion
+            deleted_count, _ = quotations_query.delete()
+            
+            # Identify not found quotations
+            not_found_ids = [id for id in quotation_ids if id not in found_ids]
+            
+            return Response({
+                'success': True,
+                'message': f'Successfully deleted {deleted_count} quotations',
+                'deleted_count': deleted_count,
+                'deleted_quotations': deletion_info,
+                'requested_count': len(quotation_ids),
+                'not_found_ids': not_found_ids,
+                'not_found_count': len(not_found_ids)
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Unexpected error: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

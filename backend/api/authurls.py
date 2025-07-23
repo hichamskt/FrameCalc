@@ -199,6 +199,9 @@ urlpatterns = [
 
      path('quotations/<int:quotation_id>/pdf/', Quotation.generate_quotation_pdf, name='generate-quotation-pdf'),
     path('quotations/<int:quotation_id>/pdf/base64/', Quotation.get_quotation_pdf_base64, name='get-quotation-pdf-base64'),
+
+        path('quotations/bulk-delete/', Quotation.bulk_delete_quotations, name='bulk-delete-quotations'),
+
     
     # Item update URLs
     path('quotations/material-items/<int:item_id>/', Quotation.QuotationMaterialItemUpdateView.as_view(), name='quotation-material-item-update'),
