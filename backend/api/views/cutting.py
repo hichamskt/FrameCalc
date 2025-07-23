@@ -15,6 +15,7 @@ def optimize_alucobond_cut(request):
 
     try:
         data = json.loads(request.body)
+        print("Request data:", data)
 
         sheet_width = data.get('sheet_width', 3200)
         sheet_height = data.get('sheet_height', 1250)

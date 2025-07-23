@@ -57,7 +57,7 @@ const navItems: NavItem[] = [
   {
     title: "Alucobond Cutting",
     Icon: TbTableShortcut,
-    to: "/",
+    to: "/dash/alcubond",
   },
   {
     title: "Commonty",

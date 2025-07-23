@@ -14,6 +14,7 @@ import NewSketch from "./Pages/NewSketch";
 import Sketches from "./Pages/Sketches";
 import { Toaster } from "react-hot-toast";
 import Quotations from "./Pages/Quotations";
+import AlucobondCutting from "./Pages/alucobondCutting";
 
 function App() {
   useEffect(() => {
@@ -62,6 +63,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Quotations />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dash/alcubond"
+            element={
+              <ProtectedRoute>
+                <AlucobondCutting  />
               </ProtectedRoute>
             }
           />
