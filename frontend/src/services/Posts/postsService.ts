@@ -20,3 +20,14 @@ export const createPost = (
     },
   });
 };
+
+
+
+
+
+// services/Posts/postsService.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getPosts = async (axios: any, url: string): Promise<{ results: Post[]; next: string | null }> => {
+  const response = await axios.get(url);
+  return response.data;
+};

@@ -158,13 +158,21 @@ export interface FilterQuotationsResult {
 
 // types.ts
 export interface Post {
-  id?: number;
+  id: number;
+  user: string; // email of the user
   text: string;
-  image?: File;
-
+  image: string | null;
+  image_url: string | null;
+  created_at: string;
+  likes_count: number;
+  comments_count: number;
+  is_liked: boolean;
+  liked_users: string[]; // or change to User[] if you later populate user data
 }
+
 
 export interface CreatePostData {
   text: string;
   image?: File;
 }
+
