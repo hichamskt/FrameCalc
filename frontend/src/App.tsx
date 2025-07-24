@@ -14,7 +14,8 @@ import NewSketch from "./Pages/NewSketch";
 import Sketches from "./Pages/Sketches";
 import { Toaster } from "react-hot-toast";
 import Quotations from "./Pages/Quotations";
-import AlucobondCutting from "./Pages/alucobondCutting";
+import AlucobondCutting from "./Pages/AlucobondCutting";
+import Community from "./Pages/Community";
 
 function App() {
   useEffect(() => {
@@ -46,6 +47,7 @@ function App() {
           <Route path="/dash/sketches" element={<Sketches />} />
           <Route path="/dash/quotations" element={<Quotations />} />
           <Route path="/dash/alcubond" element={<AlucobondCutting />} />
+          <Route path="/dash/Commonty" element={< Community />} />
         </Route>
       </Routes>
     </>

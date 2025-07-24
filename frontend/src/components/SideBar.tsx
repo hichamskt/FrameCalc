@@ -62,7 +62,7 @@ const navItems: NavItem[] = [
   {
     title: "Commonty",
     Icon: RiUserCommunityLine,
-    to: "/",
+    to: "/dash/Commonty",
   },
 ];
 

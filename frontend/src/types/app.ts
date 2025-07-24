@@ -10,6 +10,14 @@ export  type User = {
 
 
 
+export interface UserProfile {
+  user_id: string;
+  email: string;
+  username: string;
+  profile_image: string;
+  profile_image_url: string;
+}
+
 
 type Values = Userl;
 type Errors = Userl;
@@ -145,4 +153,18 @@ export interface FilterQuotationsResult {
   pagination: Pagination | null;
   filtersApplied?: Record<string, any>;
   error?: string;
+}
+
+
+// types.ts
+export interface Post {
+  id?: number;
+  text: string;
+  image?: File;
+
+}
+
+export interface CreatePostData {
+  text: string;
+  image?: File;
 }
