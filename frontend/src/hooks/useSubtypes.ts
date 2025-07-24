@@ -12,7 +12,7 @@ export const useSubtypes = () => {
     setLoading(true);
     const data = await fetchSubtypes(axios);
     console.log("subtype:",data)
-    setSubtypes(data);
+    setSubtypes(data.results);
     setLoading(false);
   };
 

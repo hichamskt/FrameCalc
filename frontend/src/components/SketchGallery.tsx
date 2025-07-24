@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useAxios } from "../api/axios";
 import LazyImage from "./LazyImage";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import toast from 'react-hot-toast';
-
+import toast from "react-hot-toast";
 
 interface Sketch {
   sketch_id: string;
@@ -15,18 +14,20 @@ interface PaginatedResponse {
   next: string | null;
 }
 
-const SketchGallery: React.FC<{ userId: string , handlePdf: (id:string,showPdf:boolean)=>void}> = ({ userId , handlePdf}) => {
-    
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
-    
+const SketchGallery: React.FC<{
+  userId: string;
+  handlePdf: (id: string, showPdf: boolean) => void;
+}> = ({ userId, handlePdf }) => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [sketches, setSketches] = useState<Sketch[]>([]);
-  const [nextPageUrl, setNextPageUrl] = useState<string | null>(`${API_BASE_URL}/sketches/user/${userId}/thumbnails/?page=1`);
+  const [nextPageUrl, setNextPageUrl] = useState<string | null>(
+    `${API_BASE_URL}/sketches/user/${userId}/thumbnails/?page=1`
+  );
   const [loading, setLoading] = useState<boolean>(false);
 
-
-  
   const observerRef = useRef<HTMLDivElement | null>(null);
-const axios =useAxios();
+  const axios = useAxios();
   const fetchSketches = async () => {
     if (!nextPageUrl || loading) return;
 
@@ -34,7 +35,7 @@ const axios =useAxios();
     try {
       const res = await axios.get<PaginatedResponse>(nextPageUrl);
 
-      setSketches(prev => [...prev, ...res.data.results]);
+      setSketches((prev) => [...prev, ...res.data.results]);
       setNextPageUrl(res.data.next);
     } catch (err) {
       console.error("Error fetching sketches:", err);
@@ -42,21 +43,19 @@ const axios =useAxios();
       setLoading(false);
     }
   };
-  const DeletSketch = async (id:string) => {
-    
+  const DeletSketch = async (id: string) => {
     try {
       await axios.delete(`sketches/${id}/`);
-       const filteredSketches = sketches.filter(sketch => sketch.sketch_id !== id);
-        setSketches(filteredSketches);
+      const filteredSketches = sketches.filter(
+        (sketch) => sketch.sketch_id !== id
+      );
+      setSketches(filteredSketches);
 
-
-     console.log('deleted successfully');
+      console.log("deleted successfully");
     } catch (err) {
       console.error("Error fetching sketches:", err);
     }
   };
-
-
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -84,12 +83,15 @@ const axios =useAxios();
     fetchSketches();
   }, []);
 
-
   return (
     <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 relative">
       {sketches.map((sketch, index) => (
         <div key={index} className="flex flex-col items-center relative group">
-            <DropList id={sketch.sketch_id} onDelete={DeletSketch} handlePdf={handlePdf} />
+          <DropList
+            id={sketch.sketch_id}
+            onDelete={DeletSketch}
+            handlePdf={handlePdf}
+          />
           <LazyImage
             src={sketch.image}
             alt={`Sketch ${index}`}
@@ -99,8 +101,15 @@ const axios =useAxios();
         </div>
       ))}
 
-      <div ref={observerRef} className="col-span-full text-center text-gray-500 py-4">
-        {loading ? "Loading..." : nextPageUrl ? "Scroll to load more..." : "No more sketches"}
+      <div
+        ref={observerRef}
+        className="col-span-full text-center text-gray-500 py-4"
+      >
+        {loading
+          ? "Loading..."
+          : nextPageUrl
+          ? "Scroll to load more..."
+          : "No more sketches"}
       </div>
     </div>
   );
@@ -108,17 +117,13 @@ const axios =useAxios();
 
 export default SketchGallery;
 
-
-
-
-
 interface DropListProps {
   onDelete: (id: string) => void;
   id: string;
-   handlePdf: (id:string,showPdf:boolean)=>void;
+  handlePdf: (id: string, showPdf: boolean) => void;
 }
 
-function DropList({ onDelete, id , handlePdf }: DropListProps) {
+function DropList({ onDelete, id, handlePdf }: DropListProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -139,13 +144,15 @@ function DropList({ onDelete, id , handlePdf }: DropListProps) {
     onDelete(id);
     setShowConfirm(false);
     setIsOpen(false);
-    toast.success('Sketch deleted successfully!');
-    console.log('clicked ')
-
+    toast.success("Sketch deleted successfully!");
+    
   };
 
   return (
-    <div className="relative z-5 w-full  hidden group-hover:block" ref={menuRef}>
+    <div
+      className="relative z-5 w-full  hidden group-hover:block"
+      ref={menuRef}
+    >
       <div
         className="text-black absolute text-[16px] top-1 right-1 cursor-pointer "
         onClick={() => setIsOpen(!isOpen)}
@@ -155,9 +162,12 @@ function DropList({ onDelete, id , handlePdf }: DropListProps) {
 
       {isOpen && (
         <ul className="flex flex-col bg-white border rounded shadow-md text-black text-sm absolute top-6 right-1">
-          <li className="p-2 cursor-pointer hover:bg-gray-100"
-          onClick={()=>handlePdf(id,true)}
-          >Quotation</li>
+          <li
+            className="p-2 cursor-pointer hover:bg-gray-100"
+            onClick={() => handlePdf(id, true)}
+          >
+            Quotation
+          </li>
           <li
             className="p-2 border-t cursor-pointer hover:bg-gray-100 text-red-600"
             onClick={() => setShowConfirm(true)}
@@ -171,7 +181,9 @@ function DropList({ onDelete, id , handlePdf }: DropListProps) {
       {showConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-[#370f45b3] bg-opacity-30 z-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-72 z-50">
-            <p className="mb-4 text-center text-sm">Are you sure you want to delete this?</p>
+            <p className="mb-4 text-center text-sm">
+              Are you sure you want to delete this?
+            </p>
             <div className="flex justify-end gap-4">
               <button
                 className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"

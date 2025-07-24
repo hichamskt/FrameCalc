@@ -17,7 +17,10 @@ from .views import (
     AccessoriesRequirementItem,
     Sketch,
     Quotation,
-    cutting
+    cutting,
+    comments,
+    post,
+    NotificationView
 )
 
 
@@ -227,5 +230,26 @@ path('quotation-aluminum-items/<int:item_id>/', Quotation.QuotationAluminumItemU
 
  path('optimize-cut/', cutting.optimize_alucobond_cut, name='optimize_cut'),
     path('download/<str:filename>/', cutting.download_cut_file, name='download_cut_file'),
+
+
+
+
+    path('posts/<int:post_id>/like/', post.ToggleLikeView.as_view(), name='toggle-like'),
+    path('posts/<int:post_id>/comments/', comments.CommentListCreateView.as_view(), name='comments'),
+
+
+     path('posts/', post.PostListCreateView.as_view(), name='post-list-create'),
+    path('posts/<int:pk>/', post.PostDetailView.as_view(), name='post-detail'),
+    path('comments/<int:pk>/delete/', post.CommentDeleteView.as_view(), name='comment-delete'),
+    path('posts/<int:post_id>/likes-count/', post.PostLikesCountView.as_view(), name='likes-count'),
+
+        path('users/<uuid:user_id>/posts/', post.UserPostsView.as_view(), name='user-posts'),
+        path('posts/<int:post_id>/likes/', post.PostLikesView.as_view(), name='post-likes'),
+        
+
+
+     path('notifications/', NotificationView.NotificationListView.as_view(), name='notification-list'),
+    path('notifications/<int:pk>/read/', NotificationView.MarkNotificationReadView.as_view(), name='mark-notification-read'),
+
 ]
 

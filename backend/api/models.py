@@ -9,6 +9,8 @@ import math
 import os
 from django.utils.translation import gettext_lazy as _
 from PIL import Image
+from django.contrib.auth import get_user_model
+
 
 
 def user_profile_image_path(instance, filename):
@@ -493,3 +495,47 @@ class QuotationAluminumItem(models.Model):
                 name='unique_aluminum_per_quotation'
             )
         ]
+
+
+        # communty
+
+class Post(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+
+    text = models.TextField(blank=True)
+    image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+
+
+User = get_user_model()
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = (
+        ('like', 'Like'),
+        ('comment', 'Comment'),
+        ('reply', 'Reply'),
+    )
+
+    recipient = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name='notifications', on_delete=models.CASCADE, null=True, blank=True)
+    notification_type = models.CharField(max_length=10, choices=NOTIFICATION_TYPES)
+    message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    comment = models.ForeignKey(Comment, null=True, blank=True, on_delete=models.CASCADE)  # Add this
+
+    def __str__(self):
+        return f"{self.sender} {self.notification_type} {self.recipient}"
+

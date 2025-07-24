@@ -64,13 +64,13 @@ function QuotationFilter({ showFilter, filter }: QuotationFilterProps) {
 
   // Set up subtype options
   useEffect(() => {
-    const newOptions = subtypes.map((subtype: { name: string }) => ({
+    console.log("subtyoes ;",subtypes)
+    const newOptions = subtypes?.map((subtype: { name: string }) => ({
       label: subtype.name,
       value: subtype.name,
     }));
     setOptions(newOptions);
   }, [subtypes]);
-
   // Initialize filters on mount
   useEffect(() => {
     const initialFilters: QuotationFilters = {

@@ -28,59 +28,26 @@ function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
-        <Route
-          path="/"
-          element={
-            
-              <HomePage />
-            
-          }
-        />
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
         <Route path="/contact" element={<ContactPage />} />
 
-        <Route path="/dash" element={
-          <ProtectedRoute>
-          <Layout />
-          </ProtectedRoute>
-          }>
-          <Route
-            path="/dash/newsketsh"
-            element={
-              
-                <NewSketch />
-             
-            }
-          />
-          <Route
-            path="/dash/sketches"
-            element={
-             
-                <Sketches />
-             
-            }
-          />
-          <Route
-            path="/dash/quotations"
-            element={
-             
-                <Quotations />
-             
-            }
-          />
-          <Route
-            path="/dash/alcubond"
-            element={
-             
-                <AlucobondCutting  />
-             
-            }
-          />
+        <Route
+          path="/dash"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dash/newsketsh" element={<NewSketch />} />
+          <Route path="/dash/sketches" element={<Sketches />} />
+          <Route path="/dash/quotations" element={<Quotations />} />
+          <Route path="/dash/alcubond" element={<AlucobondCutting />} />
         </Route>
       </Routes>
-     
     </>
   );
 }
