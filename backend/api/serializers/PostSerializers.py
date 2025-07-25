@@ -4,9 +4,25 @@ from django.contrib.auth import get_user_model
 from .CommentSerializers import CommentSerializer
 
 User = get_user_model()
+class SimpleUserSerializer(serializers.ModelSerializer):
+    profile_image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['user_id', 'username', 'profile_image_url']
+
+    def get_profile_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.profile_image and request:
+            return request.build_absolute_uri(obj.profile_image.url)
+        elif obj.profile_image:
+            return obj.profile_image.url
+        return None
+
+
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = SimpleUserSerializer(read_only=True)
     image_url = serializers.SerializerMethodField()
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     comments_count = serializers.IntegerField(source='comments.count', read_only=True)
@@ -16,7 +32,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             'id',
-            'user',
+            'user',  
             'text',
             'image',
             'image_url',

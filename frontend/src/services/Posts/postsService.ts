@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Post, CreatePostData } from '../../types/app';
+import type { Post, CreatePostData, Comment } from '../../types/app';
 
 
 export const createPost = (
@@ -31,3 +32,24 @@ export const getPosts = async (axios: any, url: string): Promise<{ results: Post
   const response = await axios.get(url);
   return response.data;
 };
+
+
+interface ToggleLikeResponse {
+  liked: boolean;
+  message: string;
+}
+
+export const togleLike = async (
+  axios: any,
+  id: number
+): Promise<ToggleLikeResponse> => {
+  const response = await axios.post(`/posts/${id}/like/`);
+  return response.data;
+};
+
+
+
+export const getPostComments = async (axios:any  , url:string): Promise<Comment> =>{
+  const response = await axios.get(url);
+  return response.data;
+}

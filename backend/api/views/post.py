@@ -20,7 +20,8 @@ class PostListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 # 2. Get Single Post with Comments (optional)
 class PostDetailView(generics.RetrieveAPIView):
@@ -136,4 +137,4 @@ class ToggleLikeView(APIView):
             }
         }
     )
-  
+        return Response({'liked': True, 'message': 'Liked'})

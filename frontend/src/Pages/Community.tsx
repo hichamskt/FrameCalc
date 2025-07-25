@@ -80,9 +80,9 @@ function Community() {
 
       <div className="mt-7">
 
-      <ul  className="flex flex-col gap-9" >
+      <ul  className="flex flex-col gap-15 " >
         {posts.map((post, id) => (
-          <li key={id}>
+          <li key={id} className="">
             <Suspense fallback={<PostSkeleton />}>
               <Post post={post} />
             </Suspense>

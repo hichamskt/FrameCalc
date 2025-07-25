@@ -176,3 +176,12 @@ export interface CreatePostData {
   image?: File;
 }
 
+
+export interface Comment {
+  
+	id: number;
+	user: string;
+	post: number;
+	text: string;
+	created_at: string;
+}
