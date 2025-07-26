@@ -55,7 +55,7 @@ function Community() {
   }, [PostsLoading]);
 
   return (
-    <div className="container p-2">
+    <div className="container  mx-auto p-2">
       <div className="text-white flex items-center justify-between w-full">
         <p className="text-3xl">Community</p>
         <button
@@ -82,7 +82,7 @@ function Community() {
 
       <ul  className="flex flex-col gap-15 " >
         {posts.map((post, id) => (
-          <li key={id} className="">
+          <li key={id} className="w-full">
             <Suspense fallback={<PostSkeleton />}>
               <Post post={post} />
             </Suspense>

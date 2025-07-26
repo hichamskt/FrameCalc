@@ -3,13 +3,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 // Types
 interface Comment {
   id: number;
-  content: string;
-  user: {
-    username: string;
-    user_id: string;
-  };
+  text: string;
+  user: string
   created_at: string;
-  post_id: number;
+  post: number;
 }
 
 interface WebSocketMessage {
@@ -30,6 +27,7 @@ interface PostSocketCallbacks {
   onCommentDeleted?: (commentId: number) => void;
   onConnected?: () => void;
   onDisconnected?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onError?: (error: any) => void;
 }
 
@@ -150,6 +148,7 @@ export const usePostSocket = (
   }, []);
 
   // Send message to WebSocket
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sendMessage = useCallback((message: any) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message));
@@ -184,3 +183,4 @@ export const usePostSocket = (
   };
 };
 
+// Alternative hook for backwards compatibility with your original structure

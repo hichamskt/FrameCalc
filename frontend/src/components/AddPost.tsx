@@ -2,7 +2,7 @@ import { RxCross2 } from "react-icons/rx";
 import type { UserProfile } from "../types/app";
 import { useEffect, useRef, useState } from "react";
 import person from "../assets/person.jpg";
-import ProfileLoader from "./ui/profileLoader";
+import ProfileLoader from "./ui/ProfileLoader";
 import vector from "../assets/Vector.png";
 import { useCreatePost } from "../hooks/posts/useCreatePost";
 
@@ -22,7 +22,7 @@ function AddPost({ user, userLoading,setShowAddpost }: AddPostType) {
 const [file, setFile] = useState<File | undefined>(undefined);
 
   const [text,setText]=useState<string>("");
-const { createNewPost, loading, error, post } = useCreatePost();
+const { createNewPost, loading, error } = useCreatePost();
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
@@ -65,7 +65,7 @@ const { createNewPost, loading, error, post } = useCreatePost();
       setText("");
       setImageURL("");
       if(!loading && !error){
-        toast.success("toast created successfully!");
+        toast.success("post  created successfully!");
         setShowAddpost(false);
 
       }
@@ -77,7 +77,7 @@ const { createNewPost, loading, error, post } = useCreatePost();
     }
   };
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#ffffff74] bg-opacity-30 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#370f45b0] bg-opacity-30 z-50">
       {loading? <Loading /> : <div className="bg-white p-6 rounded-lg shadow-md w-200 z-50 relative"  ref={postRef}>
         <div className="absolute right-2 top-2 cursor-pointer text-gray-600 hover:text-black transition-colors" onClick={()=>setShowAddpost(false)}>
           <RxCross2 />

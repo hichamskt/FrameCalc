@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Post, CreatePostData, Comment } from '../../types/app';
+import type { Post, CreatePostData,  PaginatedCommentResponse } from '../../types/app';
 
 
 export const createPost = (
@@ -48,8 +48,13 @@ export const togleLike = async (
 };
 
 
-
-export const getPostComments = async (axios:any  , url:string): Promise<Comment> =>{
+export const getPostComments = async (axios:any  , url:string): Promise<PaginatedCommentResponse> =>{
   const response = await axios.get(url);
+  return response.data;
+}
+
+
+export const addNewComment = async (axios:any  , url:string , newComment:string): Promise<PaginatedCommentResponse> =>{
+  const response = await axios.post(url,{text:newComment});
   return response.data;
 }

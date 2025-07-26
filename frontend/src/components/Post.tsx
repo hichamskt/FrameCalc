@@ -2,37 +2,36 @@
 import type { Post as PostType } from "../types/app";
 import fallback from "../assets/person.jpg";
 import { useEffect, useState } from "react";
-import { AiOutlineLike , AiFillLike } from "react-icons/ai";
+import { AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { togleLike } from "../services/Posts/postsService";
 import { useAxios } from "../api/axios";
 import { useUser } from "../hooks/useUser";
-import Comment from "./Comment";
+import Comments from "./Comments";
+
 interface PostProps {
   post: PostType;
 }
 
 export default function Post({ post }: PostProps) {
-    const {user} = useUser();
-    const [image, setImage] = useState<string>(
-        post.user?.profile_image_url || fallback
-    );
-    
-    
+  const { user } = useUser();
+  const [image, setImage] = useState<string>(
+    post.user?.profile_image_url || fallback
+  );
+
   useEffect(() => {
     setImage(post.user?.profile_image_url || fallback);
   }, [post]);
 
-
   const [liked, setLiked] = useState<boolean>(
-  post.liked_users?.includes(user?.username) || false
-);
-const [likesCount, setLikesCount] = useState<number>(post.likes_count || 0);
-const [likedUsers, setLikedUsers] = useState([... (post.liked_users || [])]);
+    post.liked_users?.includes(user?.username ?? '') || false
 
+  );
+  const [likesCount, setLikesCount] = useState<number>(post.likes_count || 0);
+  const [likedUsers, setLikedUsers] = useState([...(post.liked_users || [])]);
 
-useEffect(()=>{
-    setLiked(post.liked_users?.includes(user?.username) || false)
-},[post,user])
+  useEffect(() => {
+    setLiked(post.liked_users?.includes(user?.username ?? "") || false);
+  }, [post, user]);
 
   // utils/timeAgo.ts
 
@@ -56,38 +55,32 @@ useEffect(()=>{
     });
   }
 
-const axios  = useAxios();
+  const axios = useAxios();
 
-const toggleLike = async () => {
-  try {
-    await togleLike(axios, post.id); 
-   if (liked) {
-  setLikesCount(likesCount - 1);
-  setLiked(false);
-  setLikedUsers((prev) => prev.filter((username) => username !== user?.username));
-} else {
-  setLikesCount(likesCount + 1);
-  setLiked(true);
-  setLikedUsers((prev) => [...prev, user?.username]);
-}
+  const toggleLike = async () => {
+    try {
+      await togleLike(axios, post.id);
+      if (liked) {
+        setLikesCount(likesCount - 1);
+        setLiked(false);
+        setLikedUsers((prev) =>
+          prev.filter((username) => username !== user?.username)
+        );
+      } else {
+        setLikesCount(likesCount + 1);
+        setLiked(true);
+        if(user?.username) setLikedUsers((prev) => [...prev, user?.username]);
+      }
 
-
-    setLiked(!liked);
-  } catch (error) {
-    console.error("Failed to toggle like:", error);
-  }
-};
-
+      setLiked(!liked);
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+    }
+  };
 
   return (
     <div
-      className="  mb-2 p-4  w-[60%]  text-white  bg-white/10 backdrop-blur-lg border border-white/30
-              before:absolute before:inset-0 before:rounded-xl
-              before:-z-10 before:blur-xl before:opacity-50
-              before:bg-gradient-to-tr before:from-cyan-400/30 before:to-purple-500/30
-              shadow-[0_0_20px_2px_rgba(0,255,255,0.15)] hover:shadow-[0_0_40px_5px_rgba(0,255,255,0.3)]
-              transition-all duration-500
-
+      className="  mb-2 p-4   bg-white  rounded-2xl
  "
     >
       <div className="flex items-center gap-3 p-3">
@@ -115,42 +108,38 @@ const toggleLike = async () => {
         </div>
       )}
 
-    
-      
- 
-  <div className="mt-3">
-  <div className="relative group flex gap-2 items-center">
-    <div
-  className={`text-[16px] cursor-pointer p-1 rounded ${
-    liked ? "bg-red-500 text-white" : "text-white hover:bg-white/10"
-  }`}
-  onClick={()=>toggleLike()}
->
-  {liked ? <AiFillLike /> : <AiOutlineLike />}
-</div>
+      <div className="my-3">
+        <div className="relative group flex gap-2 items-center">
+          <div
+            className={`text-[20px] cursor-pointer p-1 rounded transition-colors ${
+              liked ? "bg-blue-400 text-white" : "text-black hover:bg-white/10"
+            }`}
+            onClick={() => toggleLike()}
+          >
+            {liked ? <AiFillLike /> : <AiOutlineLike />}
+          </div>
 
+          {likesCount > 0 && (
+            <>
+              <p className="text-sm cursor-pointer">
+                {likesCount === 1
+                  ? `${likesCount} like`
+                  : `${likesCount} likes`}
+              </p>
 
-    {likesCount > 0 && (
-      <>
-        <p className="text-sm cursor-pointer">
-          {likesCount === 1 ? `${likesCount} like` : `${likesCount} likes`}
-        </p>
-
-        <div className="absolute top-[-60px] left-0 bg-black text-white text-xs p-2 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 min-w-max">
-          {likedUsers?.map((user, i) => (
-            <p key={i} className="whitespace-nowrap">{user}</p>
-          ))}
+              <div className="absolute top-[-60px] left-0 bg-black text-white text-xs p-2 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 min-w-max">
+                {likedUsers?.map((user, i) => (
+                  <p key={i} className="whitespace-nowrap">
+                    {user}
+                  </p>
+                ))}
+              </div>
+            </>
+          )}
         </div>
-      </>
-    )}
-  </div>
-</div>
+      </div>
 
-
-<Comment postId={post.id} />
-
-
-
+      <Comments postId={post.id} />
     </div>
   );
 }

@@ -33,12 +33,8 @@ class CommentListCreateView(generics.ListCreateAPIView):
         # Prepare comment data for WebSocket
         comment_data = {
             'id': comment.id,
-            'content': comment.text,
-            'user': {
-                'username': comment.user.username,
-                'user_id': str(comment.user.user_id),  # Convert UUID to string
-                # Add other user fields if needed (profile_picture, etc.)
-            },
+            'text': comment.text,
+            'user': comment.user.email,  
             'created_at': comment.created_at.isoformat(),
             'post_id': post.id
         }

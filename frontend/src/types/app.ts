@@ -156,10 +156,17 @@ export interface FilterQuotationsResult {
 }
 
 
-// types.ts
+interface PostUser {
+  profile_image_url?:string;
+  username?:string;
+
+}
+
+
+
 export interface Post {
   id: number;
-  user: string; // email of the user
+  user: PostUser; 
   text: string;
   image: string | null;
   image_url: string | null;
@@ -167,7 +174,7 @@ export interface Post {
   likes_count: number;
   comments_count: number;
   is_liked: boolean;
-  liked_users: string[]; // or change to User[] if you later populate user data
+  liked_users: string[]; 
 }
 
 
@@ -177,11 +184,19 @@ export interface CreatePostData {
 }
 
 
+
+
+
 export interface Comment {
-  
-	id: number;
-	user: string;
-	post: number;
-	text: string;
-	created_at: string;
+  id: number;
+  user: string;
+  post: number;
+  text: string;
+  created_at: string;
+}
+
+
+export interface PaginatedCommentResponse {
+  results: Comment[];
+  next: string | null;
 }

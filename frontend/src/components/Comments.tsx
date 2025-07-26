@@ -1,51 +1,77 @@
+
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePostSocket } from "../sockets/usePostSocket";
 import { useGetComments } from "../hooks/posts/useGetComments";
+import { Send } from 'lucide-react';
+
+import { addNewComment } from "../services/Posts/postsService";
+import { useAxios } from "../api/axios";
+import type { Comment } from "../types/app";
 
 
 
-interface Comment {
-  id: number; // Changed from string | null to number to match backend
-  user: {
-    username: string;
-    user_id: string;
-  };
-  content: string; // Changed from 'text' to 'content' to match backend
-  created_at: string;
-  post_id: number;
-}
 
 interface Props {
   postId: number;
 }
 
+
+
+
 const Comment: React.FC<Props> = ({ postId }) => {
-  const {comments , setComments , next , setRefresh , commentLoading , setCommentsLoading } = useGetComments(postId)
+  const {
+    comments,
+    setComments,
+    next,
+    setRefresh,
+    commentLoading,
+    setCommentsLoading,
+  } = useGetComments(postId);
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const [newComment, setNewComment] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const url = `posts/${postId}/comments/`
   
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-
   const handleNewComment = (comment: Comment) => {
-    console.log("New comment received:", comment);
     setComments((prev) => {
-      
       const exists = prev.some((c) => c.id === comment.id);
       if (exists) return prev;
 
-      console.log('passed')
       return [comment, ...prev];
     });
   };
 
-  // Handle comment deletion from WebSocket
+const axios = useAxios();
+
+  const handleSubmitComment = async (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+    
+    if (!newComment.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    
+    try {
+        await addNewComment(axios, url,newComment);
+      setNewComment('');
+    
+      
+    } catch (error) {
+      console.error('❌ Error submitting comment:', error);
+
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+
+  
   const handleCommentDeleted = (commentId: number) => {
     console.log("Comment deleted:", commentId);
     setComments((prev) => prev.filter((c) => c.id !== commentId));
   };
 
-  // Handle WebSocket connection events
+
   const handleConnected = () => {
     console.log("✅ Connected to post WebSocket");
   };
@@ -54,6 +80,7 @@ const Comment: React.FC<Props> = ({ postId }) => {
     console.log("❌ Disconnected from post WebSocket");
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleError = (error: any) => {
     console.error("WebSocket error:", error);
   };
@@ -67,38 +94,34 @@ const Comment: React.FC<Props> = ({ postId }) => {
     onError: handleError,
   });
 
-  
-
-
-    const handleObserver = useCallback(
-      (entries: IntersectionObserverEntry[]) => {
-        const target = entries[0];
-        if (target.isIntersecting && next && !commentLoading) {
-          setCommentsLoading(true);
-          setRefresh(true);
-        }
-      },
-      [next,commentLoading]
-    );
-  
-    useEffect(() => {
-      const observer = new IntersectionObserver(handleObserver, {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0,
-      });
-  
-      if (observerRef.current) observer.observe(observerRef.current);
-  
-      return () => observer.disconnect();
-    }, [handleObserver]);
-  
-    useEffect(() => {
-      if (!commentLoading ) {
-        setCommentsLoading(false);
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && next && !commentLoading) {
+        setCommentsLoading(true);
+        setRefresh(true);
       }
-    }, [commentLoading]);
- 
+    },
+    [next, commentLoading]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "100px",
+      threshold: 0,
+    });
+
+    if (observerRef.current) observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
+  useEffect(() => {
+    if (!commentLoading) {
+      setCommentsLoading(false);
+    }
+  }, [commentLoading]);
 
   // Format date for display
   const formatDate = (dateString: string): string => {
@@ -114,10 +137,8 @@ const Comment: React.FC<Props> = ({ postId }) => {
     return date.toLocaleDateString();
   };
 
- 
 
-  
-
+  console.log("come",comments)
   return (
     <div className="space-y-4">
       {/* Connection status indicator */}
@@ -159,43 +180,72 @@ const Comment: React.FC<Props> = ({ postId }) => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <strong className="text-blue-600 font-semibold">
-                      {comment.user?.username || comment.user}
+                      {comment.user}
                     </strong>
                     <span className="text-sm text-gray-500">
                       {formatDate(comment.created_at)}
                     </span>
                   </div>
                   <p className="text-gray-800 leading-relaxed">
-                    {comment.content || comment.text}
+                    { comment.text}
                   </p>
                 </div>
               </div>
             </div>
           ))}
-         
-          
+
           <div
-        ref={observerRef}
-        className="col-span-full text-center text-gray-500 py-4"
-      >
-        {commentLoading
-          ? 
-           <div className="p-4">
-       <div className="animate-pulse">
-          <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-         <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
-         <div className="h-4 bg-gray-300 rounded w-2/3 mb-2"></div>
-         </div>
-       </div>
-          : next
-          ? "Scroll to load more..."
-          : "No more comments"}
-      </div>
+            ref={observerRef}
+            className="col-span-full text-center text-gray-500 py-4"
+          >
+            {commentLoading ? (
+              <div className="p-4">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded w-2/3 mb-2"></div>
+                </div>
+              </div>
+            ) : next ? (
+              "Scroll to load more..."
+            ) : (
+              "No more comments"
+            )}
+          </div>
         </div>
       )}
 
-      
-      
+      <div className="p-4 border-b bg-gray-50 rounded-2xl">
+        <div className="flex gap-3">
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write a comment..."
+            className="flex-1 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 text-black focus:border-transparent"
+            rows={1}
+            maxLength={500}
+            disabled={isSubmitting}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmitComment(e);
+              }
+            }}
+          />
+          <button
+            onClick={handleSubmitComment}
+            disabled={!newComment.trim() || isSubmitting}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 h-fit"
+          >
+            <Send className="w-4 h-4" />
+            {isSubmitting ? 'Posting...' : 'Post'}
+          </button>
+        </div>
+        <div className="mt-2 text-sm text-gray-500">
+          {newComment.length}/500 characters • Press Enter to post, Shift+Enter for new line
+        </div>
+      </div>
+
     </div>
   );
 };
