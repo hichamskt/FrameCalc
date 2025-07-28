@@ -18,7 +18,7 @@ interface Props {
 
 
 
-const Comment: React.FC<Props> = ({ postId }) => {
+const Comments: React.FC<Props> = ({ postId }) => {
   const {
     comments,
     setComments,
@@ -250,4 +250,4 @@ const axios = useAxios();
   );
 };
 
-export default Comment;
+export default Comments;

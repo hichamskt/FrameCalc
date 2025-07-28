@@ -250,6 +250,6 @@ path('quotation-aluminum-items/<int:item_id>/', Quotation.QuotationAluminumItemU
 
      path('notifications/', NotificationView.NotificationListView.as_view(), name='notification-list'),
     path('notifications/<int:pk>/read/', NotificationView.MarkNotificationReadView.as_view(), name='mark-notification-read'),
-
+    path('notifications/delete-all/',  NotificationView.DeleteAllNotificationsView.as_view(), name='delete-all-notifications'),
 ]
 

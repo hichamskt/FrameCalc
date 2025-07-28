@@ -9,6 +9,7 @@ import Pagination from "../components/ui/Pagination";
 import { useAxios } from "../api/axios";
 import toast from "react-hot-toast";
 
+
 interface TableColumn {
   key: string;
   header: string;
@@ -123,7 +124,8 @@ function Quotations() {
 };
 
 
-      
+    
+
 
   return (
     <div className="p-4 w-full flex flex-col gap-4">

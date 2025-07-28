@@ -200,3 +200,17 @@ export interface PaginatedCommentResponse {
   results: Comment[];
   next: string | null;
 }
+
+
+
+export interface AppNotification {
+  id: number;
+  sender: string;
+  sender_id: string;
+  type: 'comment' | 'like' | 'follow' | string;
+  post_id?: number;
+  comment_id?: number;
+  message: string;
+  timestamp: string;
+  is_read: boolean;
+}
