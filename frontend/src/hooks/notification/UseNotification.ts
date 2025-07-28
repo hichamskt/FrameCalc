@@ -10,7 +10,7 @@ export function UseNotification() {
   const [next, setNext] = useState<string | null>(
     `${import.meta.env.VITE_API_URL}/notifications/?page=1`
   );
-  const [refresh, setRefresh] = useState<boolean>(true); // Start with true to trigger first load
+  const [refresh, setRefresh] = useState<boolean>(true); 
   const axios = useAxios();
 
   useEffect(() => {
@@ -21,9 +21,10 @@ export function UseNotification() {
       try {
         const data = await getNotification(axios, next);
         const newNotifications:  AppNotification[] = data.results;
-        setnotif(prev => [...newNotifications, ...prev]);
+        setnotif(prev => [...prev ,...newNotifications]);
 
         setNext(data.next);
+
       } catch (error) {
         console.error('Failed to load notif:', error);
       } finally {
@@ -32,8 +33,8 @@ export function UseNotification() {
       }
     };
 
-    if (refresh) fetchNotifications();
+     fetchNotifications();
   }, [refresh]);
 
-  return { notif, Loading, next, setRefresh };
+  return { notif, Loading, next, setRefresh , setLoading};
 }

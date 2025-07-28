@@ -5,3 +5,9 @@ export const getNotification = async (axios: any, url: string): Promise<{ result
   const response = await axios.get(url);
   return response.data;
 };
+
+
+
+export const clearNotification = async (axios: any): Promise<void> => {
+  await axios.delete("/notifications/delete-all/");
+};

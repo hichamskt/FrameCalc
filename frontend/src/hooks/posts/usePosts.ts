@@ -9,7 +9,7 @@ export function usePosts() {
   const [next, setNext] = useState<string | null>(
     `${import.meta.env.VITE_API_URL}/posts/?page=1`
   );
-  const [refresh, setRefresh] = useState<boolean>(true); // Start with true to trigger first load
+  const [refresh, setRefresh] = useState<boolean>(true);
   const axios = useAxios();
 
   useEffect(() => {

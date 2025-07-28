@@ -19,7 +19,7 @@ const WebSocketNotificationComponent = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
   const [rawMessages, setRawMessages] = useState<string[]>([]); // For debugging
-  const [userId] = useState('e04fdae3-5042-4491-8ddd-7c5e629ce36b'); // Make this dynamic in real app
+  const [userId] = useState('e04fdae3-5042-4491-8ddd-7c5e629ce36b'); 
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
 
   // Helper function to add debug logs
