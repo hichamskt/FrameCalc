@@ -14,7 +14,7 @@ export const useUser = () => {
     try {
       setUserLoading(true);
       const data = await getUser(axios);
-      console.log("user1aa:", data);
+     
    if (data?.user_id) {
   setUser({
     user_id: data.user_id,

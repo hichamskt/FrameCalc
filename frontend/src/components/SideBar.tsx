@@ -117,13 +117,11 @@ useEffect(() => {
   const fetchUser = async () => {
     try {
       const response = await axios.get("/profile/");
-      console.log("User fetched:", response.data);
+     
       setUser(response.data); 
     } catch (err) {
       console.error("Error fetching user profile:", err);
-    } finally {
-      console.log("Fetch complete");
-    }
+    } 
   };
 
   
@@ -147,12 +145,10 @@ useEffect(() => {
           setUserCompany(true);
         }
 
-        console.log("Company data:", response.data.length);
+        
       } catch (err) {
         console.error("Error fetching companies:", err);
-      } finally {
-        console.log("Fetch complete");
-      }
+      } 
     };
 
     fetchProfile();

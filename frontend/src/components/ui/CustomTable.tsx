@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 
 interface TableData {
   id: string | number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -11,6 +12,7 @@ interface TableData {
 interface TableColumn {
   key: string;
   header: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render?: (value: any, row: TableData) => React.ReactNode;
 
 }
@@ -22,6 +24,7 @@ interface CustomTableProps {
   columns: TableColumn[];
   onSelectionChange?: (selectedIds: (string | number)[]) => void;
   selectable?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   deleteFunction : (quotationIds: (number | string )[]) => Promise<any>;
 
 }

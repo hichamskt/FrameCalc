@@ -96,7 +96,7 @@ const axios = useAxios();
     const sheetH = parseFloat(sheetHeight) || 0;
     
     let totalArea = 0;
-    let oversizedPieces: number[] = [];
+    const oversizedPieces: number[] = [];
     let hasEmptyInputs = false;
     
     pieces.forEach((piece, index) => {

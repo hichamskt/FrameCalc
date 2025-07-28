@@ -138,7 +138,7 @@ const axios = useAxios();
   };
 
 
-  console.log("come",comments)
+ 
   return (
     <div className="space-y-4">
       {/* Connection status indicator */}

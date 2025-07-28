@@ -213,4 +213,9 @@ export interface AppNotification {
   message: string;
   timestamp: string;
   is_read: boolean;
+  notification_type?:string;
+  sender_username?:string;
+  created_at?:string;
+  post?:string;
+  
 }

@@ -8,6 +8,7 @@ export const getNotification = async (axios: any, url: string): Promise<{ result
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const clearNotification = async (axios: any): Promise<void> => {
   await axios.delete("/notifications/delete-all/");
 };

@@ -13,7 +13,7 @@ export function useGetComments(postId:number) {
   const axios = useAxios();
 
   useEffect(() => {
-    console.log('go',next)
+   
     const fetchPosts = async () => {
       if (!next) return;
 
@@ -22,7 +22,7 @@ export function useGetComments(postId:number) {
         const data = await getPostComments(axios,next);
         setComments((prev) => [...prev, ...data.results]);
         setNext(data.next);
-        console.log("cmont page ",data)
+        
       } catch (error) {
         console.error('Failed to load posts:', error);
       } finally {

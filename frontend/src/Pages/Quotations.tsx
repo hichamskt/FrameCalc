@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 interface TableColumn {
   key: string;
   header: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render?: (value: any, row: TableData) => React.ReactNode;
 }
 
