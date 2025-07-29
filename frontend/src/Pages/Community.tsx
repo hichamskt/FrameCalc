@@ -33,7 +33,7 @@ function Community() {
         setRefresh(true);
       }
     },
-    [next, loading, PostsLoading]
+    [next, loading, PostsLoading , setRefresh]
   );
 
   useEffect(() => {
@@ -52,7 +52,7 @@ function Community() {
     if (!PostsLoading && loading) {
       setLoading(false);
     }
-  }, [PostsLoading]);
+  }, [PostsLoading , loading]);
 
   return (
     <div className="container  mx-auto p-2">
@@ -81,8 +81,8 @@ function Community() {
       <div className="mt-7">
 
       <ul  className="flex flex-col gap-15 " >
-        {posts.map((post, id) => (
-          <li key={id} className="w-full">
+        {posts.map((post , index) => (
+          <li key={index} className="w-full">
             <Suspense fallback={<PostSkeleton />}>
               <Post post={post} />
             </Suspense>

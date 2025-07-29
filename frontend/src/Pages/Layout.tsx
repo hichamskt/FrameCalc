@@ -53,8 +53,8 @@ const { notifications, clearNotifications } = usePostNotifSocket(
 
   return (
     <div className=" bg-[#081028] ">
-      <div className=" text-white text-2xl flex justify-end container p-3">
-        <div className="relative">
+      <div className=" text-white text-2xl  p-3">
+        <div className="relative w-full flex justify-end">
         <IoIosNotifications className="cursor-pointer"  onClick={()=>setDropNotifications(true)}/>
         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] min-w-[16px] h-4 px-[4px] flex items-center justify-center rounded-full leading-none">{notificationCount}</span>
         {dropNotification &&  <Notifications setNotifCount={setNotifCount} setDropNotifications={setDropNotifications} notifications={notifications} allNotification={allNotification} setAllNotification={setAllNotification} clearNotifications={clearNotifications} notificationHook={notificationHook} />}

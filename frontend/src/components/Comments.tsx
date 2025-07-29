@@ -85,7 +85,7 @@ const axios = useAxios();
     console.error("WebSocket error:", error);
   };
 
-  // Initialize WebSocket connection
+  
   const { isConnected } = usePostSocket(postId, {
     onNewComment: handleNewComment,
     onCommentDeleted: handleCommentDeleted,
@@ -123,7 +123,7 @@ const axios = useAxios();
     }
   }, [commentLoading]);
 
-  // Format date for display
+
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
@@ -141,7 +141,7 @@ const axios = useAxios();
  
   return (
     <div className="space-y-4">
-      {/* Connection status indicator */}
+      
       <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-700">
@@ -164,16 +164,16 @@ const axios = useAxios();
         </div>
       </div>
 
-      {/* Comments list */}
+    
       {comments.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           <p>No comments yet. Be the first to comment!</p>
         </div>
       ) : (
         <div className="space-y-3 max-h-[500px]  overflow-x-auto whitespace-nowrap scrollbar-none scroll-smooth ">
-          {comments.map((comment) => (
+          {comments.map((comment , index) => (
             <div
-              key={comment.id}
+              key={index}
               className="border border-gray-200 p-4 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
             >
               <div className="flex items-start justify-between">
@@ -186,7 +186,7 @@ const axios = useAxios();
                       {formatDate(comment.created_at)}
                     </span>
                   </div>
-                  <p className="text-gray-800 leading-relaxed">
+                  <p className="text-gray-800 leading-relaxed whitespace-normal">
                     { comment.text}
                   </p>
                 </div>

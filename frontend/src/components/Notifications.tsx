@@ -133,7 +133,7 @@ const Notifications = ({
 
   return (
     <div
-      className="absolute top-12 right-0 bg-white w-96 rounded-xl shadow-xl border border-gray-200 z-50"
+      className="absolute top-12 right-0 bg-white sm:w-96 w-full rounded-xl shadow-xl border border-gray-200 z-50"
       ref={menuRef}
     >
       {/* Header */}
