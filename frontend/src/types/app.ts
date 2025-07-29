@@ -17,6 +17,11 @@ export interface UserProfile {
   profile_image: string;
   profile_image_url: string;
 }
+export interface SettingsUser {
+  email?: string;
+  username?: string;
+  profile_image?: string;
+}
 
 
 type Values = Userl;

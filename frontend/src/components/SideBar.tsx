@@ -79,7 +79,7 @@ const SettingNavItems: NavItem[] = [
   {
     title: "Profile settings",
     Icon: GrUserSettings,
-    to: "/profile-settings",
+    to: "/dash/Settings",
   },
   {
     title: "Company settings",
