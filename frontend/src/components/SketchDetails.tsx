@@ -50,7 +50,7 @@ function SketchDetails({
     const fetchSketches = async () => {
       try {
         const response = await axios.get("/structure-types/");
-        const result = response.data;
+        const result = response.data.results;
         console.log("result:", result);
         if (result) {
           const formattedOptions = result.map(

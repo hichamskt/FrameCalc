@@ -26,7 +26,7 @@ function LandingPage() {
         <div className="pt-10 pb-8 flex gap-6 flex-col lg:flex-row">
           <div>
             <p className="text-2xl lg:text-8xl sm:text-4xl md:text-6xl  opacity-0 translate-y-4 animate-fade-in-up">
-              BUILDIN ALUMINUM.
+              BUILD IN ALUMINUM.
             </p>
             <img
               src={sketch}

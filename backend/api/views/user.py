@@ -166,11 +166,12 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # Remove password fields from update data
-        request.data.pop('password', None)
-        request.data.pop('password2', None)
+        # Make a mutable copy
+        data = request.data.copy()
+        data.pop('password', None)
+        data.pop('password2', None)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         try:
