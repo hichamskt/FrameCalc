@@ -128,7 +128,7 @@ useEffect(() => {
   if ( accessToken) {
     fetchUser();
   }
-}, [userCompany, accessToken]);
+}, [userCompany, accessToken, axios]);
 
 
 
@@ -152,7 +152,7 @@ useEffect(() => {
     };
 
     fetchProfile();
-  }, [accessToken]);
+  }, [accessToken,axios]);
 
 
 

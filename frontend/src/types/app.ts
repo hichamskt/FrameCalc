@@ -20,7 +20,11 @@ export interface UserProfile {
 export interface SettingsUser {
   email?: string;
   username?: string;
-  profile_image?: string;
+  profile_image?: File;
+}
+export interface PasswordUpdate {
+ oldPassword:string;
+ newPassword:string;
 }
 
 

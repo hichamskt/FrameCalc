@@ -1,4 +1,5 @@
 import { User, type LucideIcon } from 'lucide-react';
+import React from 'react';
 
 interface SettingsInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   icon?: LucideIcon;
@@ -20,18 +21,19 @@ const SettingsInput: React.FC<SettingsInputProps> = ({
   type = "text",
   ...props 
 }) => {
+
+ 
   return (
     <div className="w-full">
       <div className="relative">
-        {/* Label with Icon and Input on same line */}
-        <div className="flex items-center gap-4">
-          {/* Label with Icon */}
-          <div className="flex items-center text-sm font-medium text-gray-300 min-w-0 flex-shrink-0">
+       
+        <div className="grid grid-cols-[20%_75%] gap-4">
+          
+          <div className="flex items-center text-sm font-medium text-gray-300 min-w-0 ">
             <Icon className="w-4 h-4 mr-2" />
             {label}
           </div>
-          
-          {/* Input Field */}
+        
           <input
             type={type}
             value={value}
@@ -64,4 +66,4 @@ const SettingsInput: React.FC<SettingsInputProps> = ({
   );
 };
 
-export default SettingsInput;
+export default React.memo(SettingsInput);

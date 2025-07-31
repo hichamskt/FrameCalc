@@ -1,4 +1,4 @@
-import type {  SettingsUser } from "../../types/app";
+import type { SettingsUser } from "../../types/app";
 
 
 
@@ -26,6 +26,19 @@ export const UpdateUserProfile = async (
       "Content-Type": "multipart/form-data",
     },
   });
+
+  return response.data;
+};
+export const changePassword = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  axios: any,
+  data:{
+    old_password:string;
+    new_password: string
+  }
+): Promise<string> => {
+  const response = await axios.post("/change-password/", data
+  );
 
   return response.data;
 };
