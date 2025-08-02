@@ -24,6 +24,7 @@ import { TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { BiLogOutCircle } from "react-icons/bi";
 import { useAxios } from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import { useUserCompany } from "../hooks/company/useUserCompany";
 
 type NavItem = {
   title: string;
@@ -84,22 +85,27 @@ const SettingNavItems: NavItem[] = [
   {
     title: "Company settings",
     Icon: TbFileSettings,
-    to: "/company-settings",
+    to: "company-settings",
   },
 ];
 
 function SideBar() {
+
+  const {hasCompany} = useUserCompany();
   const [showSetting, setShowSetting] = useState<boolean>(false);
   const [expand, setExpand] = useState<boolean>(false);
-  const [userCompany, setUserCompany] = useState<boolean>(false);
+  const [userCompany, setUserCompany] = useState<boolean>(hasCompany || false);
   const axios = useAxios();
   const { accessToken , logout } = useAuth();
   const [user,setUser]=useState<user>();
   const navigate = useNavigate();
 
 
+useEffect(()=>{
+  setUserCompany(hasCompany);
+},[hasCompany])
 
-
+console.log(hasCompany)
 const handleLogout = async () => {
   try {
     await logout();            

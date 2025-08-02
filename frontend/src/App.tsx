@@ -17,6 +17,7 @@ import Quotations from "./Pages/Quotations";
 import AlucobondCutting from "./Pages/AlucobondCutting";
 import Community from "./Pages/Community";
 import Settings from "./Pages/Settings";
+import CompanySettings from "./Pages/CompanySettings";
 
 function App() {
   useEffect(() => {
@@ -50,6 +51,7 @@ function App() {
           <Route path="/dash/alcubond" element={<AlucobondCutting />} />
           <Route path="/dash/Commonty" element={< Community />} />
           <Route path="/dash/Settings" element={< Settings />} />
+          <Route path="/dash/company-settings" element={< CompanySettings />} />
         </Route>
       </Routes>
     </>

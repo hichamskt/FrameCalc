@@ -228,3 +228,30 @@ export interface AppNotification {
   post?:string;
   
 }
+
+
+export interface SupplyType {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string; 
+}
+
+export interface ResultItem {
+  company_id: number;
+  name: string;
+  user: string;
+  user_email: string;
+  supply_types: SupplyType[];
+
+  profiles: any[]; 
+  created_at: string; 
+}
+
+export interface ApiResponse {
+  data: any;
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ResultItem[];
+}

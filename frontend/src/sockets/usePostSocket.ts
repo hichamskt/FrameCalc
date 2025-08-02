@@ -165,6 +165,7 @@ export const usePostSocket = (
     return () => {
       disconnect();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
   // Cleanup on unmount
