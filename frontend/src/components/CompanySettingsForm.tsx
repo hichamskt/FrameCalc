@@ -4,6 +4,9 @@ import SettingsInput from "./ui/SettingsInput"
 import { Building2 } from 'lucide-react';
 import { useSupplieType } from "../hooks/useSupplieType";
 import { X, ChevronDown } from 'lucide-react';
+import type { ResultItem } from "../types/app";
+import { useUpdateCompany } from "../hooks/company/useUpdateCompany";
+
 
 interface SupplyType {
   id: number;
@@ -13,8 +16,13 @@ function CompanySettingsForm() {
     const {data} = useUserCompany();
     const [name,setName]=useState<string>(data?.name || "");
     const {supplieType} =useSupplieType();
+   
 const [options, setOptions] = useState<SupplyType[]>([]);
 const [selectedIds,setSelectedIds]= useState<number[]>([]);
+
+const companyId = data?.company_id ?? -1;
+const { handleUpdate } = useUpdateCompany(companyId);
+
 
 useEffect(()=>{
 
@@ -29,13 +37,30 @@ useEffect(()=>{
         }
 },[supplieType])
 
-    
-console.log('finalle ids', selectedIds)
+useEffect(()=>{
+  const companyName = data?.name;
+  if(companyName) setName(data?.name)
+},[data])
+
+   const submitCompany = ()=>{
+
+    if(companyId === -1) return
+
+    handleUpdate({
+      name,
+      supply_type_ids:selectedIds,
+      user:data?.user || ""
+    })
+
+    console.log("name:",name , "supplietype",selectedIds , "user:" , data?.user)
+   }
+
     
   return (
         <div className="bg-[#0B1739] p-5 rounded-2xl border border-[#343B4F] flex flex-col gap-9 lg:w-[60%] w-full">
-        <SettingsInput label={"Company Name"} placeholder="Enter a Company Name" icon={Building2}  value={name} onChange={()=>setName}  />
-        <SupplyTypesSelector  SupplyType={options}  onSelectionChange={setSelectedIds} />
+        <SettingsInput label={"Company Name"} placeholder="Enter a Company Name" icon={Building2}  value={name} onChange={(e)=>setName(e.target.value)}  />
+        <SupplyTypesSelector  SupplyType={options}  onSelectionChange={setSelectedIds} data={data}/>
+        <button onClick={submitCompany} >Update Company</button>
     </div>
   )
 }
@@ -51,14 +76,34 @@ export default CompanySettingsForm
 interface SupplyTypesSelectorProps {
   onSelectionChange?: (selectedIds: number[]) => void;
   SupplyType:SupplyType[];
-
+  data:ResultItem | null,
 }
 
-const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({ onSelectionChange, SupplyType }) => {
+const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({ onSelectionChange, SupplyType , data }) => {
   const [selectedSupplies, setSelectedSupplies] = useState<SupplyType[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   
   const supplyTypes: SupplyType[] = SupplyType;
+
+ useEffect(() => {
+  const supplyTypes = data?.supply_types;
+
+  if (Array.isArray(supplyTypes) && supplyTypes.length > 0) {
+    const formattedOptions = supplyTypes.map(
+      (type:  { id:number, name: string }) => ({
+       id:type.id,
+        name: type.name,
+      })
+    );
+
+    const formattedId = supplyTypes.map(
+      (type: { id: number }) => type.id
+    );
+
+    setSelectedSupplies(formattedOptions);
+    onSelectionChange?.(formattedId);
+  }
+}, [data,onSelectionChange]);
 
 
   const handleSelectSupply = (supply: SupplyType): void => {

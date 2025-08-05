@@ -5,3 +5,4 @@ export const getSupplieType = async (axios: any) => {
   const response = await axios.get("/supply-types/");
   return response.data;
 };
+    

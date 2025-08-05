@@ -255,3 +255,12 @@ export interface ApiResponse {
   previous: string | null;
   results: ResultItem[];
 }
+
+
+export interface SettingsCompany {
+    company_id: number,
+  user: string,
+  name: string,
+  supply_types:string[],
+  created_at: string
+}

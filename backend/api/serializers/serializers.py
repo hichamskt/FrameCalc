@@ -297,7 +297,12 @@ class ProfileWithRequirementsSerializer(serializers.ModelSerializer):
 
 class CompanySerializer(serializers.ModelSerializer):
     user_email = serializers.CharField(source='user.email', read_only=True)
-    supply_types = SupplyTypeSerializer(many=True, read_only=True)
+    supply_types = SupplyTypeSerializer(many=True, read_only=True)  # For reading
+    supply_type_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        required=False
+    )  # For writing
     profiles = ProfileSerializer(source='profile_set', many=True, read_only=True)
     
     class Meta:
@@ -308,10 +313,23 @@ class CompanySerializer(serializers.ModelSerializer):
             'user',
             'user_email',
             'supply_types',
+            'supply_type_ids',  # Add this field
             'profiles',
             'created_at'
         ]
         read_only_fields = ['company_id', 'created_at']
+
+    def update(self, instance, validated_data):
+        supply_type_ids = validated_data.pop('supply_type_ids', None)
+        
+        # Update other fields
+        instance = super().update(instance, validated_data)
+        
+        # Update supply_types if provided
+        if supply_type_ids is not None:
+            instance.supply_types.set(supply_type_ids)
+        
+        return instance
 
 class CompanyDetailSerializer(serializers.ModelSerializer):
     """
