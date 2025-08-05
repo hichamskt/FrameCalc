@@ -1,157 +1,197 @@
 import { useEffect, useState } from "react";
-import { useUserCompany } from "../hooks/company/useUserCompany"
-import SettingsInput from "./ui/SettingsInput"
-import { Building2 } from 'lucide-react';
+import { useUserCompany } from "../hooks/company/useUserCompany";
+import SettingsInput from "./ui/SettingsInput";
+import { Building2 } from "lucide-react";
 import { useSupplieType } from "../hooks/useSupplieType";
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown } from "lucide-react";
 import type { ResultItem } from "../types/app";
 import { useUpdateCompany } from "../hooks/company/useUpdateCompany";
-
+import Loading from "./ui/Loading";
 
 interface SupplyType {
   id: number;
   name: string;
 }
 function CompanySettingsForm() {
-    const {data} = useUserCompany();
-    const [name,setName]=useState<string>(data?.name || "");
-    const {supplieType} =useSupplieType();
-   
-const [options, setOptions] = useState<SupplyType[]>([]);
-const [selectedIds,setSelectedIds]= useState<number[]>([]);
+  const { data } = useUserCompany();
+  const [name, setName] = useState<string>(data?.name || "");
+  const { supplieType } = useSupplieType();
 
-const companyId = data?.company_id ?? -1;
-const { handleUpdate } = useUpdateCompany(companyId);
+  const [options, setOptions] = useState<SupplyType[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  const companyId = data?.company_id ?? -1;
+  const { handleUpdate, loading } = useUpdateCompany(companyId);
 
-useEffect(()=>{
+  const [nameError, setNameError] = useState<string>("");
 
-   if (supplieType) {
-          const formattedOptions = supplieType.map(
-            (type: { id: number; name: string }) => ({
-              id: type.id,
-              name: type.name,
-            })
-          ); 
-        setOptions(formattedOptions)
-        }
-},[supplieType])
+  const validateName = (value: string): boolean => {
+    if (!value.trim()) {
+      setNameError("Name is required");
+      return false;
+    }
+    if (value.trim().length < 2) {
+      setNameError("Name must be at least 2 characters");
+      return false;
+    }
+    if (value.trim().length > 100) {
+      setNameError("Name must be less than 100 characters");
+      return false;
+    }
+    if (!/^[a-zA-Z0-9\s\-_.]+$/.test(value)) {
+      setNameError("Name contains invalid characters");
+      return false;
+    }
 
-useEffect(()=>{
-  const companyName = data?.name;
-  if(companyName) setName(data?.name)
-},[data])
+    setNameError("");
+    return true;
+  };
 
-   const submitCompany = ()=>{
+  useEffect(() => {
+    if (supplieType) {
+      const formattedOptions = supplieType.map(
+        (type: { id: number; name: string }) => ({
+          id: type.id,
+          name: type.name,
+        })
+      );
+      setOptions(formattedOptions);
+    }
+  }, [supplieType]);
 
-    if(companyId === -1) return
+  useEffect(() => {
+    const companyName = data?.name;
+    if (companyName) setName(data?.name);
+  }, [data]);
 
+  const submitCompany = () => {
+    if (companyId === -1) return;
+    console.log('is validated' , validateName(name) )
+    if (!validateName(name)) return;
     handleUpdate({
       name,
-      supply_type_ids:selectedIds,
-      user:data?.user || ""
-    })
+      supply_type_ids: selectedIds,
+      user: data?.user || "",
+    });
+  };
 
-    console.log("name:",name , "supplietype",selectedIds , "user:" , data?.user)
-   }
-
-    
   return (
-        <div className="bg-[#0B1739] p-5 rounded-2xl border border-[#343B4F] flex flex-col gap-9 lg:w-[60%] w-full">
-        <SettingsInput label={"Company Name"} placeholder="Enter a Company Name" icon={Building2}  value={name} onChange={(e)=>setName(e.target.value)}  />
-        <SupplyTypesSelector  SupplyType={options}  onSelectionChange={setSelectedIds} data={data}/>
-        <button onClick={submitCompany} >Update Company</button>
+    <div className="bg-[#0B1739] p-5 rounded-2xl border border-[#343B4F] flex flex-col gap-9 lg:w-[60%] w-full">
+      <SettingsInput
+        label={"Company Name"}
+        placeholder="Enter a Company Name"
+        icon={Building2}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        error={nameError}
+      />
+      <SupplyTypesSelector
+        SupplyType={options}
+        onSelectionChange={setSelectedIds}
+        data={data}
+      />
+      <div className="flex justify-end">
+        <button
+          className="bg-[#CB3CFF] text-white px-4 py-2 rounded cursor-pointer"
+          onClick={() => submitCompany()}
+          disabled={loading}
+        >
+          {loading ? <Loading /> : "Update"}
+        </button>
+      </div>
     </div>
-  )
+  );
 }
 
-export default CompanySettingsForm
-
-
-
-
-
-
+export default CompanySettingsForm;
 
 interface SupplyTypesSelectorProps {
   onSelectionChange?: (selectedIds: number[]) => void;
-  SupplyType:SupplyType[];
-  data:ResultItem | null,
+  SupplyType: SupplyType[];
+  data: ResultItem | null;
 }
 
-const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({ onSelectionChange, SupplyType , data }) => {
+const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({
+  onSelectionChange,
+  SupplyType,
+  data,
+}) => {
   const [selectedSupplies, setSelectedSupplies] = useState<SupplyType[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  
+
   const supplyTypes: SupplyType[] = SupplyType;
 
- useEffect(() => {
-  const supplyTypes = data?.supply_types;
+  useEffect(() => {
+    const supplyTypes = data?.supply_types;
 
-  if (Array.isArray(supplyTypes) && supplyTypes.length > 0) {
-    const formattedOptions = supplyTypes.map(
-      (type:  { id:number, name: string }) => ({
-       id:type.id,
-        name: type.name,
-      })
-    );
+    if (Array.isArray(supplyTypes) && supplyTypes.length > 0) {
+      const formattedOptions = supplyTypes.map(
+        (type: { id: number; name: string }) => ({
+          id: type.id,
+          name: type.name,
+        })
+      );
 
-    const formattedId = supplyTypes.map(
-      (type: { id: number }) => type.id
-    );
+      const formattedId = supplyTypes.map((type: { id: number }) => type.id);
 
-    setSelectedSupplies(formattedOptions);
-    onSelectionChange?.(formattedId);
-  }
-}, [data,onSelectionChange]);
-
+      setSelectedSupplies(formattedOptions);
+      onSelectionChange?.(formattedId);
+    }
+  }, [data, onSelectionChange]);
 
   const handleSelectSupply = (supply: SupplyType): void => {
     if (!selectedSupplies.some((s: SupplyType) => s.id === supply.id)) {
       const newSelection = [...selectedSupplies, supply];
       setSelectedSupplies(newSelection);
-      
-     
+
       const selectedIds = newSelection.map((s: SupplyType) => s.id);
       onSelectionChange?.(selectedIds);
-      console.log('Selected Supply IDs:', selectedIds); 
+      console.log("Selected Supply IDs:", selectedIds);
     }
     setIsOpen(false);
   };
 
   const handleRemoveSupply = (supplyToRemove: SupplyType): void => {
-    const newSelection = selectedSupplies.filter((supply: SupplyType) => supply.id !== supplyToRemove.id);
+    const newSelection = selectedSupplies.filter(
+      (supply: SupplyType) => supply.id !== supplyToRemove.id
+    );
     setSelectedSupplies(newSelection);
-    
-   
+
     const selectedIds = newSelection.map((s: SupplyType) => s.id);
     onSelectionChange?.(selectedIds);
-    console.log('Selected Supply IDs:', selectedIds); 
+    console.log("Selected Supply IDs:", selectedIds);
   };
 
-  const availableSupplies: SupplyType[] = supplyTypes.filter((supply: SupplyType) => 
-    !selectedSupplies.some((selected: SupplyType) => selected.id === supply.id)
+  const availableSupplies: SupplyType[] = supplyTypes.filter(
+    (supply: SupplyType) =>
+      !selectedSupplies.some(
+        (selected: SupplyType) => selected.id === supply.id
+      )
   );
 
   return (
     <div className="w-full mx-auto p-6 bg-[#343B4F]  rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold mb-4 text-white">Select Supply Types</h2>
-      
-     
+      <h2 className="text-xl font-semibold mb-4 text-white">
+        Select Supply Types
+      </h2>
+
       <div className="relative mb-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-full p-3 border border-gray-300 rounded-lg bg-white text-left flex items-center justify-between hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <span className="text-gray-600">
-            {availableSupplies.length > 0 ? 'Choose supply types...' : 'All types selected'}
+            {availableSupplies.length > 0
+              ? "Choose supply types..."
+              : "All types selected"}
           </span>
-          <ChevronDown 
-            className={`h-5 w-5 text-black transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          <ChevronDown
+            className={`h-5 w-5 text-black transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
           />
         </button>
-        
-       
+
         {isOpen && availableSupplies.length > 0 && (
           <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
             {availableSupplies.map((supply: SupplyType) => (
@@ -167,14 +207,15 @@ const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({ onSelectionCh
         )}
       </div>
 
-     
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-gray-700 mb-2">
           Selected Supply Types ({selectedSupplies.length})
         </h3>
-        
+
         {selectedSupplies.length === 0 ? (
-          <p className="text-gray-500 text-sm italic">No supply types selected</p>
+          <p className="text-gray-500 text-sm italic">
+            No supply types selected
+          </p>
         ) : (
           <div className="space-y-2">
             {selectedSupplies.map((supply: SupplyType) => (
@@ -183,8 +224,12 @@ const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({ onSelectionCh
                 className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3"
               >
                 <div>
-                  <span className="text-blue-800 font-medium">{supply.name}</span>
-                  <span className="text-blue-600 text-xs ml-2">(ID: {supply.id})</span>
+                  <span className="text-blue-800 font-medium">
+                    {supply.name}
+                  </span>
+                  <span className="text-blue-600 text-xs ml-2">
+                    (ID: {supply.id})
+                  </span>
                 </div>
                 <button
                   onClick={() => handleRemoveSupply(supply)}
@@ -199,15 +244,14 @@ const SupplyTypesSelector: React.FC<SupplyTypesSelectorProps> = ({ onSelectionCh
         )}
       </div>
 
-    
       {selectedSupplies.length > 0 && (
         <div className="mt-4 p-3 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
-            <strong>Total selected:</strong> {selectedSupplies.length} supply type{selectedSupplies.length !== 1 ? 's' : ''}
+            <strong>Total selected:</strong> {selectedSupplies.length} supply
+            type{selectedSupplies.length !== 1 ? "s" : ""}
           </p>
         </div>
       )}
     </div>
   );
 };
-
