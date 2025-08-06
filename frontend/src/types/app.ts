@@ -264,3 +264,13 @@ export interface SettingsCompany {
   supply_types:string[],
   created_at: string
 }
+
+
+export interface ProfileAlum {
+  	profile_id: number,
+	company: number,
+	company_name: string,
+	name: string,
+	quality: string,
+	created_at: string
+}

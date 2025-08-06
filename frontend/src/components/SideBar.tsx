@@ -72,7 +72,7 @@ const navItems: NavItem[] = [
 
 const CompanyNavItems: NavItem[] = [
   { title: "Products", Icon: AiFillProduct, to: "/" },
-  { title: "Alum Profiles", Icon: SiCodeclimate, to: "/" },
+  { title: "Alum Profiles", Icon: SiCodeclimate, to: "/dash/aluminum-profile" },
   { title: "Accessories", Icon: FaBarsProgress, to: "/" },
   { title: "Material requirements", Icon: IoMdGitPullRequest, to: "/" },
 ];

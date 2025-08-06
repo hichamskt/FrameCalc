@@ -22,7 +22,7 @@ export const useQuotations = () => {
   const filter = useCallback(async (filters: QuotationFilters) => {
     setLoading(true);
     try {
-      // Store current filters for pagination
+      
       const newFilters = { ...filters };
       setCurrentFilters(newFilters);
       
@@ -32,8 +32,7 @@ export const useQuotations = () => {
         setQuotations([...result.quotations]);
         setPagination(result.pagination);
         setError(null);
-        console.log('Filtered data:', result.quotations);
-        console.log('Pagination info:', result.pagination);
+       
       } else {
         setError(result.error || 'Failed to filter quotations');
         setPagination(null);
@@ -48,7 +47,7 @@ export const useQuotations = () => {
     }
   }, [axios]);
 
-  // Helper function to change page while keeping current filters
+ 
   const changePage = useCallback(async (page: number) => {
     const filtersWithPage = {
       ...currentFilters,
@@ -57,11 +56,11 @@ export const useQuotations = () => {
     return filter(filtersWithPage);
   }, [currentFilters, filter]);
 
-  // Helper function to change page size while keeping current filters
+  
   const changePageSize = useCallback(async (pageSize: number) => {
     const filtersWithPageSize = {
       ...currentFilters,
-      page: 1, // Reset to first page when changing page size
+      page: 1, 
       pageSize
     };
     return filter(filtersWithPageSize);
