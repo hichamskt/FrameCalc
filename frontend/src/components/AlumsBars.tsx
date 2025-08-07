@@ -1,53 +1,27 @@
 
 
 
-import  { useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Search, Filter, Edit2, Trash2, Plus, DollarSign, Package, Ruler } from 'lucide-react';
+import type { AlumBar } from '../types/app';
+import { useGetAlumBars } from '../hooks/alumBar/useGetAlumBars';
 
-interface Product {
-  profile: number;
-  profile_name: string;
-  name: string;
-  unit_type: string;
-  unit_price: string;
-  reference: string;
-  length: string;
-  created_at: string;
-}
+
 
 function AlumsBars() {
-  const [products, setProducts] = useState<Product[]>([
-    {
-      profile: 25,
-      profile_name: "op",
-      name: "Aluminum pctbc",
-      unit_type: "meter",
-      unit_price: "24.99",
-      reference: "1002",
-      length: "2.50",
-      created_at: "2025-08-07T11:47:00.629617Z"
-    },
-    {
-      profile: 26,
-      profile_name: "premium",
-      name: "Steel Frame ABC",
-      unit_type: "piece",
-      unit_price: "45.50",
-      reference: "1003",
-      length: "3.00",
-      created_at: "2025-08-06T09:30:00.629617Z"
-    },
-    {
-      profile: 27,
-      profile_name: "standard",
-      name: "Copper Wire XYZ",
-      unit_type: "meter",
-      unit_price: "12.75",
-      reference: "1004",
-      length: "10.00",
-      created_at: "2025-08-05T14:15:00.629617Z"
-    }
-  ]);
+  const {alumBars} = useGetAlumBars();  
+  const [products, setProducts] = useState<AlumBar[]>([]);
+
+
+ useEffect(() => {
+  if (alumBars) {
+    const uniqueBars = alumBars.filter(
+      (bar, index, self) =>
+        index === self.findIndex((b) => b.profile_material_id === bar.profile_material_id)
+    );
+    setProducts(uniqueBars);
+  }
+}, [alumBars]);
 
  
   const [searchTerm, setSearchTerm] = useState<string>('');

@@ -33,7 +33,7 @@ export default function Post({ post }: PostProps) {
     setLiked(post.liked_users?.includes(user?.username ?? "") || false);
   }, [post, user]);
 
-  // utils/timeAgo.ts
+ 
 
   function formatTimeAgo(dateString: string): string {
     const now = new Date();
@@ -48,7 +48,7 @@ export default function Post({ post }: PostProps) {
     const days = Math.floor(hours / 24);
     if (days < 7) return `${days}d ago`;
 
-    // More than 7 days → show the date (e.g., "Jul 10")
+  
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",

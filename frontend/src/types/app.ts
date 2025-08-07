@@ -274,3 +274,15 @@ export interface ProfileAlum {
 	quality: string,
 	created_at: string
 }
+
+export interface AlumBar{
+  profile_material_id: number,
+			profile: number,
+			profile_name: string,
+			name: string,
+			unit_type: string,
+			unit_price: string,
+			reference: string,
+			length: number,
+			created_at: string
+}
