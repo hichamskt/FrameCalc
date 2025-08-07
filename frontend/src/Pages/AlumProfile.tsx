@@ -1,7 +1,10 @@
+import { useState } from "react";
 import Profiles from "../components/Profiles"
+import AlumsBars from "../components/AlumsBars";
 
 
 function AlumProfile() {
+const [step,setStep]=useState(1);
 
 
   return (
@@ -11,10 +14,10 @@ function AlumProfile() {
         <p className="text-3xl">Alum Profiles</p>
         <div className="bg-[#0B1739] p-5 rounded-2xl border border-[#343B4F] flex flex-col gap-9 w-full">
             <ul className="flex gap-3 items-center">
-                <li>Profiles</li>
-                <li>Alum bars</li>
+                <li className={`${step===1 && "border-b-2 border-white" } cursor-pointer`} onClick={()=>setStep(1)}>Profiles</li>
+                <li className={`${step===2 && "border-b-2 border-white" } cursor-pointer`} onClick={()=>setStep(2)}>Alum bars</li>
             </ul>
-            <Profiles  />
+           {step===1 ? <Profiles  /> : <AlumsBars />}
 
         </div>
 

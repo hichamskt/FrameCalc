@@ -12,10 +12,7 @@ function ContactPage() {
     const userId = "e04fdae3-5042-4491-8ddd-7c5e629ce36b";
 const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${userId}/`);
 
-    // if (!user?.id) return;
-    // Make sure to use ws:// or wss:// and the correct URL with your backend host and port
-    // const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${user?.id}/`);
-// const ws = new WebSocket("ws://localhost:8000/ws/test/");
+   
 
     ws.onopen = () => {
       console.log('WebSocket connected');
