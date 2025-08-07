@@ -21,7 +21,7 @@ export const createProfile = async (axios: any, data:{
     name: string,
     quality: string
 
-} ): Promise<{ results: ProfileAlum;}> => {
-  const response = await axios.delete(`/profiles/` , data);
-  return response.data;
+} ): Promise<{ data: ProfileAlum;}> => {
+  const response = await axios.post(`/profiles/` , data);
+  return response;
 };

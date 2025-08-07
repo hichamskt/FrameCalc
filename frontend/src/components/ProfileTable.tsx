@@ -4,19 +4,25 @@ import { useAlumProfil } from "../hooks/profilesAlum/useAlumProfil";
 import type { ProfileAlum } from "../types/app";
 import { useUpdateProfile } from "../hooks/profilesAlum/useUpdateProfile";
 import { useDeleteProfile } from "../hooks/profilesAlum/useDeleteProfileAlum";
+import { useCreateProfile } from "../hooks/profilesAlum/useCreateProfile";
 
 const ProfileTable: React.FC = () => {
   const { allprofiles } = useAlumProfil();
   const [profiles, setProfiles] = useState<ProfileAlum[]>([]);
   const { handleUpdate } = useUpdateProfile();
   const { deleteProfileById, error } = useDeleteProfile();
-
+  const {createNewProfile , newProfile} = useCreateProfile();
   const [editingId, setEditingId] = useState<number>(-1);
   const [editForm, setEditForm] = useState<Partial<ProfileAlum>>({});
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; profile: ProfileAlum | null }>({
     isOpen: false,
     profile: null
+  });
+  const [createModal, setCreateModal] = useState<boolean>(false);
+  const [createForm, setCreateForm] = useState<{ name: string; quality: string }>({
+    name: "",
+    quality: ""
   });
 
   const handleEdit = (profile: ProfileAlum): void => {
@@ -26,7 +32,7 @@ const ProfileTable: React.FC = () => {
 
   useEffect(() => {
     if (allprofiles) setProfiles(allprofiles);
-  }, [allprofiles, profiles]);
+  }, [allprofiles]);
 
   const handleSave = (): void => {
     if (!profiles) return;
@@ -67,6 +73,42 @@ const ProfileTable: React.FC = () => {
 
   const cancelDelete = (): void => {
     setDeleteModal({ isOpen: false, profile: null });
+  };
+
+  const handleCreateProfile = (): void => {
+    setCreateModal(true);
+  };
+
+  const handleCreateSubmit = (): void => {
+   
+    
+  
+    createNewProfile({
+      name:createForm.name,
+      quality:createForm.quality
+    });
+    
+    // setProfiles([...profiles, newProfile]);
+    setCreateModal(false);
+    setCreateForm({ name: "", quality: "" });
+  };
+  console.log("new",profiles)
+
+
+  useEffect(()=>{
+    if(newProfile)
+    setProfiles((prev) => [...prev, newProfile])
+    
+  console.log('yes')
+  },[newProfile])
+
+  const handleCreateCancel = (): void => {
+    setCreateModal(false);
+    setCreateForm({ name: "", quality: "" });
+  };
+
+  const handleCreateInputChange = (field: keyof typeof createForm, value: string): void => {
+    setCreateForm({ ...createForm, [field]: value });
   };
 
   const handleInputChange = (
@@ -119,7 +161,10 @@ const ProfileTable: React.FC = () => {
               className="w-full pl-10 pr-4 py-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:border-blue-500/50 focus:bg-gray-800/70 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/25"
             />
           </div>
-          <button className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25">
+          <button 
+            onClick={handleCreateProfile}
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+          >
             <Plus className="w-5 h-5 mr-2" />
             Add Profile
           </button>
@@ -339,27 +384,90 @@ const ProfileTable: React.FC = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+     
+      {createModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700/50 shadow-2xl transform transition-all duration-300 scale-100">
+            <div className="text-center">
+             
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Plus className="w-8 h-8 text-white" />
+              </div>
+              
+             
+              <h3 className="text-2xl font-bold text-white mb-6">Create New Profile</h3>
+              
+             
+              <div className="space-y-4 mb-6">
+                <div className="text-left">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={createForm.name}
+                    onChange={(e) => handleCreateInputChange('name', e.target.value)}
+                    placeholder="Enter profile name"
+                    className="w-full px-4 py-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:border-blue-500/50 focus:bg-gray-800/70 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/25"
+                  />
+                </div>
+                
+                <div className="text-left">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Quality
+                  </label>
+                  <input
+                    type="text"
+                    value={createForm.quality}
+                    onChange={(e) => handleCreateInputChange('quality', e.target.value)}
+                    placeholder="Enter quality grade"
+                    className="w-full px-4 py-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:border-blue-500/50 focus:bg-gray-800/70 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/25"
+                  />
+                </div>
+              </div>
+              
+             
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={handleCreateCancel}
+                  className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 border border-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateSubmit}
+                  disabled={!createForm.name.trim() || !createForm.quality.trim()}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  Create Profile
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+     
       {deleteModal.isOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700/50 shadow-2xl transform transition-all duration-300 scale-100">
             <div className="text-center">
-              {/* Icon */}
+              
               <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Trash2 className="w-8 h-8 text-white" />
               </div>
               
-              {/* Title */}
+             
               <h3 className="text-2xl font-bold text-white mb-3">Delete Profile</h3>
               
-              {/* Description */}
+              
               <p className="text-gray-400 mb-6 leading-relaxed">
                 Are you sure you want to delete the profile 
                 <span className="font-semibold text-white"> "{deleteModal.profile?.name}"</span>? 
                 This action cannot be undone.
               </p>
 
-              {/* Profile Details */}
+            
               <div className="bg-gray-800/50 rounded-xl p-4 mb-6 border border-gray-700/30">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
@@ -373,7 +481,7 @@ const ProfileTable: React.FC = () => {
                 </div>
               </div>
               
-              {/* Buttons */}
+              
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button
                   onClick={cancelDelete}
