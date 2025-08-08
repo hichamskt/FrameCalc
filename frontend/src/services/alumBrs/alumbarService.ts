@@ -11,6 +11,11 @@ export const updateAlumBr = async (axios: any ,id:number  , data:AlumBar): Promi
   return response;
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createAlumBr = async (axios: any   , data:AlumBar): Promise<{ data: AlumBar }> => {
+  const response = await axios.post(`profile-aluminums/`,data);
+  return response;
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const deleteAlumBr = async (axios: any ,id:number  ): Promise<{ results: AlumBar[] }> => {
   const response = await axios.delete(`profile-aluminums/${id}/`);
   return response;

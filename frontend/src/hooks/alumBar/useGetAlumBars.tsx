@@ -21,6 +21,7 @@ export function useGetAlumBars() {
         const data = await getAlumBr(axios, next);
         setalumBars((prev) => [...prev, ...data.results]);
         setNext(data.next);
+        console.log('yes')
       } catch (error) {
         console.error('Failed to load posts:', error);
       } finally {

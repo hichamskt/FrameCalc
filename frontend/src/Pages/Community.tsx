@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { FaArrowRightLong } from "react-icons/fa6";
 import AddPost from "../components/AddPost";
