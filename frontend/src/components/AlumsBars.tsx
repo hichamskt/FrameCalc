@@ -7,12 +7,12 @@ import { useGetAlumBars } from '../hooks/alumBar/useGetAlumBars';
 import type { AlumBar } from '../types/app';
 import { useAlumProfil } from '../hooks/profilesAlum/useAlumProfil';
 import { useUpdateAlumBar } from '../hooks/alumBar/useUpdateAlumBar';
+import { useDeleteAlumBar } from '../hooks/alumBar/useDeleteAlumBar';
 
-// Mock type definition based on your component
 
 
 function AlumsBars() {
-  // Mock data for demonstration
+
   
 
   const [products, setProducts] = useState<AlumBar[]>([]);
@@ -29,7 +29,7 @@ function AlumsBars() {
   const [selectedProduct, setSelectedProduct] = useState<AlumBar | null>(null);
   const {allprofiles} = useAlumProfil();
   const {handleUpdate} = useUpdateAlumBar();
-
+const {deleteAlumBarById} =useDeleteAlumBar();
   const [formData, setFormData] = useState<AlumBar>({
     profile_material_id:"",
     profile: '',
@@ -101,6 +101,7 @@ useEffect(() => {
   const handleDelete = (product: AlumBar) => {
     setSelectedProduct(product);
     setShowDeleteModal(true);
+    setSelectedId(Number(product.profile_material_id))
   };
 
   const confirmDelete = () => {
@@ -108,6 +109,7 @@ useEffect(() => {
       setProducts(products.filter(p => p.profile_material_id !== selectedProduct.profile_material_id));
       setShowDeleteModal(false);
       setSelectedProduct(null);
+      deleteAlumBarById(selectedId);
     }
   };
 
